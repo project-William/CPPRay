@@ -27,19 +27,6 @@ Light::Light()
 	m_intensity = 1;
 }
 
-void Light::setPosition(vec3 v)
-{
-	m_position = v;
-}
-
-int Light::getType()
-{
-	if (m_direction != vec3())
-		return LIGHT_DIRECTIONAL;
-	
-	return LIGHT_POINT;
-}
-
 vec3 Light::getPosition()
 {
 	return m_position;

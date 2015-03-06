@@ -88,7 +88,6 @@
     <ClCompile Include="intersection.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mat4.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="plane.cpp" />

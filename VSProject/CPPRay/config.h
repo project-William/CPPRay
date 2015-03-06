@@ -1,9 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define WIDTH 1280/2
-#define HEIGHT 720/2
-#define SCALE 2
+#define WIDTH 256
+#define HEIGHT 256
+#define SCALE 1
 #define RECURSION_MAX 5
 
 #endif

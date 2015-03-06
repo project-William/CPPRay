@@ -21,9 +21,6 @@
     <ClCompile Include="display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mat4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

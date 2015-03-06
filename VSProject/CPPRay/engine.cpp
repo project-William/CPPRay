@@ -10,23 +10,28 @@ Engine::Engine(Display *display, Camera *camera)
 	m_camera = camera;
 
 	// Scene directional lights
-	m_lights.push_back(Light(vec3(0), vec3(1, 1, 1), vec3(1, 1, 1), vec3(0, 0, 1), 0.1f));
+	//m_lights.push_back(Light(vec3(0), vec3(1, 1, 1), vec3(1, 1, 1), vec3(0, 0, 1), 0.1f));
 
 	// Scene point lights
-	m_lights.push_back(Light(vec3(0, 0, 0), vec3(1, 1, 1), vec3(0, 0, 0.5f), 1.0f));
+	m_lights.push_back(Light(vec3(0, 2, 0), vec3(1, 1, 1), vec3(0, 0, 0.15f), 1.0f));
 	m_lights.push_back(Light(vec3(-2, 0, -4), vec3(0.25f, 0.5f, 1), vec3(0, 0, 0.5f), 1.0f));
-	m_lights.push_back(Light(vec3(2, 2, -5), vec3(1, 0.5f, 0), vec3(0, 0, 0.25f), 1.0f));
 
 	// Scene materials
 	Material mat_w_diffuse = Material(vec3(), vec3(1), 0, 0, 1);
 	Material mat_r_diffuse = Material(vec3(), vec3(1, 0, 0), 0, 0, 1);
 	Material mat_g_diffuse = Material(vec3(), vec3(0, 1, 0), 0, 0, 1);
 	Material mat_b_diffuse = Material(vec3(), vec3(0, 0, 1), 0, 0, 1);
+	Material mat_r_reflective = Material(vec3(), vec3(1, 0, 0), 1, 0, 1);
+	Material mat_g_reflective = Material(vec3(), vec3(0, 1, 0), 1, 0, 1);
+	Material mat_b_reflective = Material(vec3(), vec3(0, 0, 1), 1, 0, 1);
+	Material mat_mirror = Material(vec3(), vec3(0), 1, 0, 1);
+	Material mat_glass = Material(vec3(), vec3(0), 0, 1, 1.52f);
 
 	// Scene spheres
 	m_spheres.push_back(Sphere(vec3(0, 0, -5), 1, mat_w_diffuse));
-	m_spheres.push_back(Sphere(vec3(-1, 0.75f, -4), 0.5f, mat_g_diffuse));
-	m_spheres.push_back(Sphere(vec3(0.75f, -0.25f, -3), 0.5f, mat_b_diffuse));
+	m_spheres.push_back(Sphere(vec3(-1, 0.75f, -4), 0.5f, mat_mirror));
+	m_spheres.push_back(Sphere(vec3(1, -0.5f, -3), 0.5f, mat_g_reflective));
+	m_spheres.push_back(Sphere(vec3(-2.5f, -0.5f, -5.5f), 0.5f, mat_r_reflective));
 
 	// Scene planes
 	m_planes.push_back(Plane(vec3(0, -1, 0), vec3(0, 1, 0), mat_w_diffuse));
@@ -51,7 +56,7 @@ void Engine::render()
 	int h = m_display->getHeight();
 	float ar = m_display->getAspectRatio();
 	Ray r_primary = Ray(m_camera->getTransform().getPosition());
-	quaternion q = m_camera->getTransform().getRotation();
+	quaternion &q = m_camera->getTransform().getRotation();
 	quaternion q_inv = q.conjugate();
 
 	for (int y = 0; y < h; y++)
@@ -141,6 +146,39 @@ vec3 Engine::raytrace(Ray &r, int n)
 		NdotH = std::max(vec3::dot(xFinal.getNormal(), H_vector), 0.0f);
 		radiance += (xFinal.getMaterial().getReflectance() * l.getColor() * NdotL * l.getIntensity()) / A;
 		radiance += std::pow(NdotH, 50) * l.getIntensity() / A;
+	}
+
+	// Reflect the ray if the hit surface is reflective
+	if (xFinal.getMaterial().getReflectivity() > 0.0f)
+	{
+		Ray r_reflected = Ray(xFinal.getPosition(), vec3::reflect(r.getDirection(), xFinal.getNormal()));
+		radiance += raytrace(r_reflected, n + 1);
+	}
+
+	// Refract the ray if the hit surface is refractive
+	if (xFinal.getMaterial().getRefractivity() > 0.0f)
+	{
+		Ray r_refracted = Ray(xFinal.getPosition());
+		vec3 &N = xFinal.getNormal();
+		float NdotI = vec3::dot(r.getDirection(), N), ior, n1, n2, cos_t;
+
+		if (NdotI > 0.0f)
+		{
+			n1 = r.getIOR();
+			n2 = xFinal.getMaterial().getIOR();
+			N = N.negate();
+		}
+		else
+		{
+			n1 = xFinal.getMaterial().getIOR();
+			n2 = r.getIOR();
+			NdotI = -NdotI;
+		}
+
+		ior = n2 / n1;
+		cos_t = ior * ior * (1.0f - NdotI * NdotI);
+		r_refracted = Ray(xFinal.getPosition(), vec3::refract(r.getDirection(), N, NdotI, ior, cos_t), 1.0f);
+		radiance += raytrace(r_refracted, n + 1);
 	}
 
 	return radiance;

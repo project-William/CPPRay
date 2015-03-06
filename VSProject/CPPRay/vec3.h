@@ -178,15 +178,14 @@ struct vec3
 		return I - (N * dot(N, I) * 2.0f);
 	}
 
-	static vec3 refract(vec3 &I, vec3 &N, float eta)
+	static vec3 refract(vec3 &I, vec3 &N, float &NdotI, float &eta, float &cos_t)
 	{
-		float NdotI = dot(N, I);
-		float k = 1.0f - eta * eta * (1.0f - NdotI * NdotI);
+		cos_t = std::sqrt(1.0f - cos_t);
 
-		if (k < 0.0f)
-			return vec3();
-
-		return I * eta - N * (eta * dot(N, I) + sqrt(k));
+		if (cos_t < 1.0f)
+			return I * eta - N * (eta * dot(N, I) + cos_t);
+		else
+			return reflect(I, N);
 	}
 };
 

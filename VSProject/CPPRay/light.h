@@ -15,9 +15,14 @@ public:
 	Light(vec3 position, vec3 color, vec3 attenuation, float intensity);
 	Light();
 
-	void setPosition(vec3 v);
+	int getType()
+	{
+		if (m_direction != vec3())
+			return LIGHT_DIRECTIONAL;
 
-	int getType();
+		return LIGHT_POINT;
+	}
+
 	vec3 getPosition();
 	vec3 getDirection();
 	vec3 getColor();
