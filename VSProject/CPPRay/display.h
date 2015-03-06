@@ -3,9 +3,8 @@
 
 #include <iostream>
 #include "sdl2/SDL.h"
-
-class math;
-struct vec3;
+#include "math.h"
+#include "vec3.h"
 
 class Display
 {
@@ -15,11 +14,37 @@ public:
 
 	int init();
 	void render();
-	void clear(Uint32 color);
+
+	void clear(Uint32 color)
+	{
+		for (int i = 0; i < m_width * m_height; i++)
+			m_pixels[i] = color;
+	}
+
+	void setPixel(int x, int y, Uint32 color)
+	{
+		if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+			return;
+
+		m_pixels[x + y * m_width] = color;
+	}
+
+	void setPixel(int x, int y, vec3 &v)
+	{
+		if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+			return;
+
+		v = math::clamp(v, 0.0f, 1.0f);
+
+		Uint32 r = (Uint32) (v.x * 255.0f);
+		Uint32 g = (Uint32) (v.y * 255.0f);
+		Uint32 b = (Uint32) (v.z * 255.0f);
+		Uint32 hex = ((r << 16) | (g << 8) | b);
+
+		m_pixels[x + y * m_width] = hex;
+	}
 
 	void setTitle(char *title);
-	void setPixel(int x, int y, Uint32 color);
-	void setPixel(int x, int y, vec3 color);
 
 	int getWidth() { return m_width; }
 	int getHeight() { return m_height; }

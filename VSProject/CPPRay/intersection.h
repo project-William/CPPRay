@@ -31,7 +31,6 @@ public:
 	{
 		return !(*this == x);
 	}
-
 private:
 	vec3 m_position;
 	vec3 m_normal;

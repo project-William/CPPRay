@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 0, 0), quaternion().identity(), vec3(1), 32, 128);
+	Camera camera = Camera(vec3(0, 0, 0), quaternion().identity(), vec3(1), 64, 256);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -115,10 +115,10 @@ int main(int argc, char** argv)
 					camera.rotate(camera.getTransform().getRotation().getUpVector(), -deltaTime);
 					break;
 				case SDLK_q:
-					camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
+					camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
 					break;
 				case SDLK_e:
-					camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
+					camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
 					break;
 				}
 			}

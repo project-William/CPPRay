@@ -14,12 +14,12 @@ Camera::Camera()
 	m_sensitivity = 32.0f;
 }
 
-void Camera::move(vec3 direction, float dt)
+void Camera::move(vec3 &direction, float dt)
 {
 	m_transform.setPosition(m_transform.getPosition() - direction * m_speed * dt);
 }
 
-void Camera::rotate(vec3 axis, float dt)
+void Camera::rotate(vec3 &axis, float dt)
 {
 	quaternion q = quaternion().createFromAxisAngle(axis.x, axis.y, axis.z, m_sensitivity * dt);
 	m_transform.setRotation(q * m_transform.getRotation());

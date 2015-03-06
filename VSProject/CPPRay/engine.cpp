@@ -1,5 +1,7 @@
 #include "engine.h"
 
+const vec3 Engine::NULLCOLOR = vec3();
+
 Engine::Engine(Display *display, Camera *camera)
 {
 	m_display = display;
@@ -8,11 +10,12 @@ Engine::Engine(Display *display, Camera *camera)
 	m_camera = camera;
 
 	// Scene directional lights
-	//m_lights.push_back(Light(vec3(0), vec3(1, 1, 1), vec3(1, 1, 1), vec3(0, 0, 1), 1.0f));
+	m_lights.push_back(Light(vec3(0), vec3(1, 1, 1), vec3(1, 1, 1), vec3(0, 0, 1), 0.1f));
 
 	// Scene point lights
-	m_lights.push_back(Light(vec3(2, 1, 0), vec3(1, 1, 1), vec3(0, 0, 0.25f), 1.0f));
-	m_lights.push_back(Light(vec3(-1, 1, 0), vec3(0.1f, 0.5, 1), vec3(0, 0, 0.5f), 1.0f));
+	m_lights.push_back(Light(vec3(0, 0, 0), vec3(1, 1, 1), vec3(0, 0, 0.5f), 1.0f));
+	m_lights.push_back(Light(vec3(-2, 0, -4), vec3(0.25f, 0.5f, 1), vec3(0, 0, 0.5f), 1.0f));
+	m_lights.push_back(Light(vec3(2, 2, -5), vec3(1, 0.5f, 0), vec3(0, 0, 0.25f), 1.0f));
 
 	// Scene materials
 	Material mat_w_diffuse = Material(vec3(), vec3(1), 0, 0, 1);
@@ -21,7 +24,7 @@ Engine::Engine(Display *display, Camera *camera)
 	Material mat_b_diffuse = Material(vec3(), vec3(0, 0, 1), 0, 0, 1);
 
 	// Scene spheres
-	m_spheres.push_back(Sphere(vec3(0, 0, -5), 1, mat_r_diffuse));
+	m_spheres.push_back(Sphere(vec3(0, 0, -5), 1, mat_w_diffuse));
 	m_spheres.push_back(Sphere(vec3(-1, 0.75f, -4), 0.5f, mat_g_diffuse));
 	m_spheres.push_back(Sphere(vec3(0.75f, -0.25f, -3), 0.5f, mat_b_diffuse));
 
@@ -39,9 +42,7 @@ Engine::~Engine()
 
 void Engine::update(float dt)
 {
-	float t = SDL_GetTicks() / 1000.0f;
-	m_spheres[1].setPosition(vec3(std::cos(t), std::sin(t), -4));
-	m_lights[1].setPosition(vec3(std::cos(t * 0.75f), 1, -3));
+
 }
 
 void Engine::render()
@@ -50,6 +51,8 @@ void Engine::render()
 	int h = m_display->getHeight();
 	float ar = m_display->getAspectRatio();
 	Ray r_primary = Ray(m_camera->getTransform().getPosition());
+	quaternion q = m_camera->getTransform().getRotation();
+	quaternion q_inv = q.conjugate();
 
 	for (int y = 0; y < h; y++)
 	{
@@ -57,12 +60,10 @@ void Engine::render()
 		{
 			// Construct the ray's direction vector and aim it towards the virtual screen's pixel
 			float x_norm = (x - w * 0.5f) / w * ar;
-			float y_norm = (h * 0.5f - y) / h * ar;
+			float y_norm = (h * 0.5f - y) / h;
 			vec3 v_norm = vec3(x_norm, y_norm, -1.0f);
 
 			// Rotate the ray direction based on camera look direction
-			quaternion q = m_camera->getTransform().getRotation();
-			quaternion q_inv = q.conjugate();
 			quaternion w = quaternion(0, v_norm.x, v_norm.y, v_norm.z);
 			quaternion r = q * w * q_inv;
 
@@ -79,43 +80,44 @@ void Engine::render()
 	}
 }
 
-vec3 Engine::raytrace(Ray r, int n)
+vec3 Engine::raytrace(Ray &r, int n)
 {
 	// Immediately return vec3(0) if recursion limit was hit
 	if (n > RECURSION_MAX)
-		return vec3();
+		return NULLCOLOR;
 
 	// Initialize all raytracing data
 	vec3 radiance = vec3();
 
 	// Find the closest intersection
-	Intersection xFinal = intersect(r);
+	Intersection xFinal = intersect(r, 1e6f);
 
 	// Return black if no intersection happened
 	if (xFinal == Intersection::invalidIntersection)
-		return vec3();
+		return NULLCOLOR;
+
+	// Initialize some variables that are not going to change
+	vec3 V_vector = r.getDirection().negate();
 
 	// Shade each hit surface agains each light source
-	for (int i = 0; i < m_lights.size(); i++)
+	for (auto &l : m_lights)
 	{
 		float NdotL, NdotH, L_length, A;
-		Light L = m_lights[i];
-		vec3 L_vector, V_vector, H_vector;
+		vec3 L_vector, H_vector;
 
-		if (L.getType() == LIGHT_DIRECTIONAL)
+		if (l.getType() == LIGHT_DIRECTIONAL)
 		{
-			L_vector = L.getDirection();
-			V_vector = r.getDirection().negate();
+			L_vector = l.getDirection();
+			L_length = 1e6f;
 			H_vector = (V_vector + L_vector).normalize();
 			A = 1.0f;
 		}
-		else if (L.getType() == LIGHT_POINT)
+		else if (l.getType() == LIGHT_POINT)
 		{
-			L_vector = L.getPosition() - xFinal.getPosition();
+			L_vector = l.getPosition() - xFinal.getPosition();
 			L_length = L_vector.length();
-			V_vector = r.getDirection().negate();
 			H_vector = (V_vector + L_vector).normalize();
-			A = L.getAttenuation().x + L.getAttenuation().y * L_length + L.getAttenuation().z * L_length * L_length + 1e-3f;
+			A = l.getAttenuation().x + l.getAttenuation().y * L_length + l.getAttenuation().z * L_length * L_length + 1e-3f;
 		}
 		else
 		{
@@ -124,48 +126,52 @@ vec3 Engine::raytrace(Ray r, int n)
 
 		// Trace shadows
 		Ray r_shadow = Ray(xFinal.getPosition(), L_vector);
-		Intersection xShadow = intersect(r_shadow);
+		Intersection xShadow = intersect(r_shadow, L_length);
 
 		if (xShadow != Intersection::invalidIntersection)
 			continue;
 
 		// Basic lambertian shading for now
 		NdotL = std::max(vec3::dot(xFinal.getNormal(), L_vector.normalize()), 0.0f);
+
+		// Do not calculate shading if the color is going to be black
+		if (NdotL <= 0.0f)
+			continue;
+
 		NdotH = std::max(vec3::dot(xFinal.getNormal(), H_vector), 0.0f);
-		radiance += (xFinal.getMaterial().getReflectance() * L.getColor() * NdotL * L.getIntensity()) / A;
-		radiance += std::pow(NdotH, 50) / A;
+		radiance += (xFinal.getMaterial().getReflectance() * l.getColor() * NdotL * l.getIntensity()) / A;
+		radiance += std::pow(NdotH, 50) * l.getIntensity() / A;
 	}
 
 	return radiance;
 }
 
-Intersection Engine::intersect(Ray r)
+Intersection Engine::intersect(Ray &r, float t)
 {
 	Intersection xInit = Intersection::invalidIntersection;
 	Intersection xFinal = Intersection::invalidIntersection;
-	float t_init = 1e6;
 
 	// Find the nearest intersection against a sphere if there's any
-	for (int i = 0; i < m_spheres.size(); i++)
+	for (auto &s : m_spheres)
 	{
-		xInit = m_spheres[i].intersect(r);
+		xInit = s.intersect(r);
 
-		if (xInit != Intersection::invalidIntersection && xInit.getT() < t_init)
+		if (xInit != Intersection::invalidIntersection && xInit.getT() < t)
 		{
 			xFinal = xInit;
-			t_init = xFinal.getT();
+			t = xFinal.getT();
 		}
 	}
 
 	// Find the nearest intersection against a plane if there's any
-	for (int i = 0; i < m_planes.size(); i++)
+	for (auto &p : m_planes)
 	{
-		xInit = m_planes[i].intersect(r);
+		xInit = p.intersect(r);
 
-		if (xInit != Intersection::invalidIntersection && xInit.getT() < t_init)
+		if (xInit != Intersection::invalidIntersection && xInit.getT() < t)
 		{
 			xFinal = xInit;
-			t_init = xFinal.getT();
+			t = xFinal.getT();
 		}
 	}
 

@@ -12,8 +12,8 @@ public:
 	Camera(vec3 position, quaternion rotation, vec3 scale, float speed, float sensitivity);
 	Camera();
 
-	void move(vec3 direction, float amount);
-	void rotate(vec3 axis, float theta);
+	void move(vec3 &direction, float amount);
+	void rotate(vec3 &axis, float theta);
 
 	void setTransform(Transform t);
 	void setPosition(vec3 position);

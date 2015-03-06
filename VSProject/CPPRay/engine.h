@@ -22,9 +22,11 @@ public:
 
 	void update(float dt);
 	void render();
-	vec3 raytrace(Ray r, int n);
-	Intersection intersect(Ray r);
+	vec3 raytrace(Ray &r, int n);
+	Intersection intersect(Ray &r, float t);
 private:
+	static const vec3 NULLCOLOR;
+
 	Display *m_display;
 	Camera *m_camera;
 	std::vector<Light> m_lights;
