@@ -11,7 +11,7 @@ public:
 
 	mat4 initIdentity();
 	mat4 initTranslation(float x, float y, float z);
-	mat4 initRotation();
+	mat4 initRotation(float w, float x, float y, float z);
 	mat4 initScale(float x, float y, float z);
 
 	mat4 operator*(const mat4 &other);

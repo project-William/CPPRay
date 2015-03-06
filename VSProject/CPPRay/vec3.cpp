@@ -8,11 +8,18 @@ vec3::vec3(float x, float y, float z)
 	this->z = z;
 }
 
-vec3::vec3(float f = 0.0f)
+vec3::vec3(float f)
 {
 	x = f;
 	y = f;
 	z = f;
+}
+
+vec3::vec3()
+{
+	x = 0.0f;
+	y = 0.0f;
+	z = 0.0f;
 }
 
 vec3 vec3::operator+=(const vec3 &other)

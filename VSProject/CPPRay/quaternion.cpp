@@ -1,4 +1,5 @@
 #include "quaternion.h"
+#include "vec3.h"
 
 quaternion::quaternion(float w, float x, float y, float z)
 {
@@ -73,7 +74,7 @@ quaternion quaternion::createFromAxisAngle(float x, float y, float z, float thet
 	return *this;
 }
 
-quaternion quaternion::initIdentity()
+quaternion quaternion::identity()
 {
 	w = 1.0f;
 	x = 0.0f;
@@ -81,4 +82,19 @@ quaternion quaternion::initIdentity()
 	z = 0.0f;
 
 	return *this;
+}
+
+vec3 quaternion::getForwardVector()
+{
+	return vec3(0, 0, 1) * *this;
+}
+
+vec3 quaternion::getUpVector()
+{
+	return vec3(0, 1, 0) * *this;
+}
+
+vec3 quaternion::getRightVector()
+{
+	return vec3(1, 0, 0) * *this;
 }

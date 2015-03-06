@@ -1,10 +1,11 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
-#include <string>
-#include "vec3.h"
-
 #define PI 3.14159265359f
+
+#include <string>
+
+struct vec3;
 
 struct quaternion
 {
@@ -22,7 +23,10 @@ struct quaternion
 	std::string toString();
 
 	quaternion createFromAxisAngle(float x, float y, float z, float theta);
-	quaternion initIdentity();
+	quaternion identity();
+	vec3 getForwardVector();
+	vec3 getUpVector();
+	vec3 getRightVector();
 };
 
 #endif

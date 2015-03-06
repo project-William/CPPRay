@@ -11,6 +11,7 @@ struct vec3
 
 	vec3(float x, float y, float z);
 	vec3(float f);
+	vec3();
 
 	vec3 operator+=(const vec3 &other);
 	vec3 operator+=(const float f);

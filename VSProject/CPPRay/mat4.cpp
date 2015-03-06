@@ -31,10 +31,9 @@ mat4 mat4::initTranslation(float x, float y, float z)
 	return *this;
 }
 
-// I need to implement quaternions before doing this, not touching ugly euler angles
-mat4 mat4::initRotation()
+mat4 mat4::initRotation(float w, float x, float y, float z)
 {
-	return *this;
+	return *this; // <-- I'm too lazy atm to do this now, whatever
 }
 
 mat4 mat4::initScale(float x, float y, float z)
