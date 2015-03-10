@@ -29,6 +29,7 @@ public:
 	Intersection intersect(const Ray &r, float t);
 private:
 	static const vec3 NULLCOLOR;
+	static const vec3 AMBIENTCOLOR;
 
 	Display *m_display;
 	Camera *m_camera;

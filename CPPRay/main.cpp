@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 0, 2), quaternion().identity().createFromAxisAngle(0, 1, 0, 45), vec3(1), 64, 256);
+	Camera camera = Camera(vec3(0, 1, 0), quaternion().createFromAxisAngle(0, 1, 0, 45) * quaternion().createFromAxisAngle(1, 0, 0, -5), vec3(1), 64, 256);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -35,12 +35,16 @@ int main(int argc, char** argv)
 	// Create SDL_Event object
 	SDL_Event event;
 
+	// Seed the rng
+	srand(static_cast<unsigned>(time_t(0)));
+
 	// Initialize deltaTime related variables
 	int frames = 0;
 	int currentFrame = 0;
 	int lastFrame = SDL_GetTicks();
 	float deltaTime = 0;
 	float frameTime = 0;
+	bool rendered = false;
 
 	while (running)
 	{
@@ -53,16 +57,28 @@ int main(int argc, char** argv)
 		frameTime = 1.0f / deltaTime;
 
 		// Display info after 1000 frames
-		if (frames >= 100)
+		if (frames >= 10)
 		{
 			std::cout << "deltaTime: " << deltaTime << "s" << " | frameTime: " << frameTime << "FPS" << std::endl;
 			frames = 0;
 		}
 
-		// Render everything
+		// Render everything, only once if supersampling is enabled
 		engine.update(deltaTime);
+#if defined(SUPERSAMPLING)
+		if (!rendered)
+		{
+			auto timeStart = SDL_GetTicks();
+			engine.render();
+			auto timeEnd = SDL_GetTicks();
+			auto seconds = static_cast<float>(timeEnd - timeStart) / 1000.0f;
+			rendered = true;
+			std::cout << "Image rendered! Time taken: " << seconds << "s" << std::endl;
+		}
+#else
 		display.clear(0x00000000);
 		engine.render();
+#endif
 		display.render();
 
 		// Process SDL events
@@ -81,7 +97,7 @@ int main(int argc, char** argv)
 					running = false;
 					break;
 
-				// Camera movement
+					// Camera movement
 				case SDLK_w:
 					camera.move(camera.getTransform().getRotation().getForwardVector(), deltaTime);
 					break;
@@ -101,7 +117,7 @@ int main(int argc, char** argv)
 					camera.move(camera.getTransform().getRotation().getUpVector(), deltaTime);
 					break;
 
-				// Camera orientation
+					// Camera orientation
 				case SDLK_UP:
 					camera.rotate(camera.getTransform().getRotation().getRightVector(), deltaTime);
 					break;

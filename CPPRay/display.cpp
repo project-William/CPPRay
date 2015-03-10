@@ -7,6 +7,7 @@ Display::Display(char *title, int width, int height, int scale)
 	m_height = height;
 	m_scale = scale;
 	m_pixels = new Uint32[m_width * m_height];
+	clear(0x00000000);
 
 	if (init() != 0)
 	{
