@@ -12,15 +12,11 @@ Engine::Engine(Display *display, Camera *camera)
 	// Multithreading
 	m_workers = SDL_GetCPUCount();
 
-	// Scene directional lights
-	m_lights.push_back(Light(vec3(0), vec3(-1, 2, 1), vec3(1, 1, 1), vec3(0, 0, 1), 0.75f));
-
 	// Scene point lights
-	//m_lights.push_back(Light(vec3(0, 5, -3), vec3(1, 1, 1), vec3(0, 0, 0.1f), 2.0f));
-	m_lights.push_back(Light(vec3(-10, 3, -3), vec3(1, 0, 1), vec3(0, 0, 0.1f), 1.0f));
+	m_lights.push_back(Light(vec3(0, 2.5f, -8), vec3(1, 1, 1), vec3(0, 0, 0.1f), 1.0f));
 
 	// Scene materials
-	Material mat_w_checkerboard = Material(vec3(1), 0, true);
+	Material mat_w_checkerboard = Material(vec3(1, 1, 1), 0, true);
 	Material mat_w_diffuse = Material(vec3(), vec3(1), 0, 0, 1);
 	Material mat_r_diffuse = Material(vec3(), vec3(1, 0, 0), 0, 0, 1);
 	Material mat_g_diffuse = Material(vec3(), vec3(0, 1, 0), 0, 0, 1);
@@ -30,15 +26,21 @@ Engine::Engine(Display *display, Camera *camera)
 	Material mat_b_reflective = Material(vec3(), vec3(0, 0, 1), 0.75f, 0, 1);
 	Material mat_c_reflective = Material(vec3(), vec3(0, 1, 1), 0.5f, 0, 1);
 	Material mat_mirror = Material(vec3(), vec3(0), 1, 0, 1);
+	Material mat_water = Material(vec3(), vec3(0), 0, 1, 1.33f);
 	Material mat_glass = Material(vec3(), vec3(0), 0, 1, 1.52f);
 
 	// Scene spheres
-	m_spheres.push_back(Sphere(vec3(-3, 1, -3), 1, mat_c_reflective));
-	m_spheres.push_back(Sphere(vec3(-1, 0.5f, -3), 0.5f, mat_r_reflective));
-	m_spheres.push_back(Sphere(vec3(-2, 0.25f, -1), 0.25f, mat_g_reflective));
+	m_spheres.push_back(Sphere(vec3(2.5f, 1, -6), 1, mat_mirror));
+	m_spheres.push_back(Sphere(vec3(-2.5f, 1, -6), 1, mat_water));
+	m_spheres.push_back(Sphere(vec3(1, 0.75f, -4), 0.5f, mat_c_reflective));
 
 	// Scene planes
 	m_planes.push_back(Plane(vec3(0, 0, 0), vec3(0, 1, 0), mat_w_checkerboard));
+	m_planes.push_back(Plane(vec3(0, 5, 0), vec3(0, -1, 0), mat_w_diffuse));
+	m_planes.push_back(Plane(vec3(5, 0, 0), vec3(-1, 0, 0), mat_g_diffuse));
+	m_planes.push_back(Plane(vec3(-5, 0, 0), vec3(1, 0, 0), mat_b_diffuse));
+	m_planes.push_back(Plane(vec3(0, 0, -16), vec3(0, 0, 1), mat_w_diffuse));
+	m_planes.push_back(Plane(vec3(0, 0, 4), vec3(0, 0, -1), mat_w_diffuse));
 }
 
 Engine::~Engine()

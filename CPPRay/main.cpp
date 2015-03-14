@@ -4,6 +4,7 @@
 #include "config.h"
 #include "display.h"
 #include "engine.h"
+#include "input.h"
 
 using namespace math;
 
@@ -27,7 +28,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 1, 0), quaternion().createFromAxisAngle(0, 1, 0, 45) * quaternion().createFromAxisAngle(1, 0, 0, -5), vec3(1), 64, 256);
+	Camera camera = Camera(vec3(0, 1, 3), quaternion().identity(), vec3(1), 8, 128);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -57,29 +58,43 @@ int main(int argc, char** argv)
 		frameTime = 1.0f / deltaTime;
 
 		// Display info after 1000 frames
-		if (frames >= 10)
+		if (frames >= 100)
 		{
 			std::cout << "deltaTime: " << deltaTime << "s" << " | frameTime: " << frameTime << "FPS" << std::endl;
 			frames = 0;
 		}
 
-		// Render everything, only once if supersampling is enabled
+		// Calculate rendering of the scene
 		engine.update(deltaTime);
-#if defined(SUPERSAMPLING)
-		if (!rendered)
-		{
-			auto timeStart = SDL_GetTicks();
-			engine.render();
-			auto timeEnd = SDL_GetTicks();
-			auto seconds = static_cast<float>(timeEnd - timeStart) / 1000.0f;
-			rendered = true;
-			std::cout << "Image rendered! Time taken: " << seconds << "s" << std::endl;
-		}
-#else
 		display.clear(0x00000000);
 		engine.render();
-#endif
 		display.render();
+
+		// Handle input
+		if (Input::g_keys[SDL_SCANCODE_W])
+			camera.move(camera.getTransform().getRotation().getForwardVector(), deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_S])
+			camera.move(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
+		if (Input::g_keys[SDL_SCANCODE_A])
+			camera.move(camera.getTransform().getRotation().getRightVector(), deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_D])
+			camera.move(camera.getTransform().getRotation().getRightVector(), -deltaTime);
+		if (Input::g_keys[SDL_SCANCODE_R])
+			camera.move(camera.getTransform().getRotation().getUpVector(), -deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_F])
+			camera.move(camera.getTransform().getRotation().getUpVector(), deltaTime);
+		if (Input::g_keys[SDL_SCANCODE_UP])
+			camera.rotate(camera.getTransform().getRotation().getRightVector(), deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_DOWN])
+			camera.rotate(camera.getTransform().getRotation().getRightVector(), -deltaTime);
+		if (Input::g_keys[SDL_SCANCODE_LEFT])
+			camera.rotate(camera.getTransform().getRotation().getUpVector(), deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_RIGHT])
+			camera.rotate(camera.getTransform().getRotation().getUpVector(), -deltaTime);
+		if (Input::g_keys[SDL_SCANCODE_Q])
+			camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
+		else if (Input::g_keys[SDL_SCANCODE_E])
+			camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
 
 		// Process SDL events
 		while (SDL_PollEvent(&event))
@@ -89,54 +104,24 @@ int main(int argc, char** argv)
 			case SDL_QUIT:
 				running = false;
 				break;
-
 			case SDL_KEYDOWN:
-				switch (event.key.keysym.sym)
 				{
-				case SDLK_ESCAPE:
-					running = false;
-					break;
-
-					// Camera movement
-				case SDLK_w:
-					camera.move(camera.getTransform().getRotation().getForwardVector(), deltaTime);
-					break;
-				case SDLK_s:
-					camera.move(camera.getTransform().getRotation().getForwardVector().negate(), deltaTime);
-					break;
-				case SDLK_a:
-					camera.move(camera.getTransform().getRotation().getRightVector(), deltaTime);
-					break;
-				case SDLK_d:
-					camera.move(camera.getTransform().getRotation().getRightVector().negate(), deltaTime);
-					break;
-				case SDLK_r:
-					camera.move(camera.getTransform().getRotation().getUpVector().negate(), deltaTime);
-					break;
-				case SDLK_f:
-					camera.move(camera.getTransform().getRotation().getUpVector(), deltaTime);
-					break;
-
-					// Camera orientation
-				case SDLK_UP:
-					camera.rotate(camera.getTransform().getRotation().getRightVector(), deltaTime);
-					break;
-				case SDLK_DOWN:
-					camera.rotate(camera.getTransform().getRotation().getRightVector(), -deltaTime);
-					break;
-				case SDLK_LEFT:
-					camera.rotate(camera.getTransform().getRotation().getUpVector(), deltaTime);
-					break;
-				case SDLK_RIGHT:
-					camera.rotate(camera.getTransform().getRotation().getUpVector(), -deltaTime);
-					break;
-				case SDLK_q:
-					camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
-					break;
-				case SDLK_e:
-					camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
-					break;
+					auto id = event.key.keysym.scancode;
+					if (id > 0 && id < sizeof(Input::g_keys) / sizeof(*Input::g_keys))
+					{
+						Input::g_keys[id] = true;
+					}
 				}
+				break;
+			case SDL_KEYUP:
+				{
+					auto id = event.key.keysym.scancode;
+					if (id > 0 && id < sizeof(Input::g_keys) / sizeof(*Input::g_keys))
+					{
+						Input::g_keys[id] = false;
+					}
+				}
+				break;
 			}
 		}
 
