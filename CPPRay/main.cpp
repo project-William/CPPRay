@@ -25,10 +25,10 @@ int main(int argc, char** argv)
 	}
 
 	// Initialize the main display object by loading it into the stack
-	Display display("C++ Raytracer", WIDTH, HEIGHT, SCALE);
+	Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 1, 3), quaternion().identity(), vec3(1), 8, 128);
+	Camera camera = Camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 8, 128);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 	{
 		// Calculate delta-time
 		currentFrame = SDL_GetTicks();
-		deltaTime = 0.9f * deltaTime + 0.1f * (float) (currentFrame - lastFrame) / 1000;
+		deltaTime = 0.1f * deltaTime + 0.9f * (float) (currentFrame - lastFrame) / 1000;
 		lastFrame = currentFrame;
 
 		// Calculate frames per second
@@ -67,10 +67,13 @@ int main(int argc, char** argv)
 		// Calculate rendering of the scene
 		engine.update(deltaTime);
 		display.clear(0x00000000);
-		engine.render();
+		engine.renderPT();
 		display.render();
 
 		// Handle input
+		if (Input::g_keys[SDL_SCANCODE_SPACE])
+			engine.clearSamples();
+
 		if (Input::g_keys[SDL_SCANCODE_W])
 			camera.move(camera.getTransform().getRotation().getForwardVector(), deltaTime);
 		else if (Input::g_keys[SDL_SCANCODE_S])

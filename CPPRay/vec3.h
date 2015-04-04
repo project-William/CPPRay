@@ -1,6 +1,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#define PI 3.14159265359f
+
 #include <string>
 #include <cmath>
 
@@ -190,6 +192,31 @@ namespace math
 				return I * eta - N * (eta * dot(N, I) + cos_t);
 			else
 				return reflect(I, N);
+		}
+
+		static vec3 randomHemisphere(const vec3 &N)
+		{
+			// Calculate a random sphere vector
+			auto phi = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f * PI;
+			auto rq = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			auto r = std::sqrt(rq);
+
+			auto V = vec3(r * std::cos(phi), r * std::sin(phi), std::sqrt(1.0f - rq)).normalize();
+
+			// Rotate towards N if required
+			auto dot = N.z;
+
+			if (dot > 0.9999f)
+				return V;
+
+			if (dot < -0.9999f)
+				return vec3(V.x, V.y, -V.z);
+
+			vec3 up = vec3(0, 0, 1);
+			vec3 a1 = cross(up, N).normalize();
+			vec3 a2 = cross(a1, N).normalize();
+
+			return (a1 * V.x + a2 * V.y + N * V.z).normalize();
 		}
 	};
 

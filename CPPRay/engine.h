@@ -23,17 +23,21 @@ public:
 	~Engine();
 
 	void update(float dt);
-	void render();
-	void renderMultithreaded(int width, int height, int xOffset, int yOffset, int id);
-	vec3 raytrace(const Ray &r, int n);
-	Intersection intersect(const Ray &r, float t);
+	void renderRT();
+	void renderPT();
+	void clearSamples();
 private:
+	vec3 raytrace(const Ray &r, int n);
+	vec3 pathtrace(const Ray &r, int n, float weight);
+	Intersection intersect(const Ray &r, float t);
+
 	static const vec3 NULLCOLOR;
 	static const vec3 AMBIENTCOLOR;
 
+	int m_sampleAmount;
+	vec3 *m_samples;
 	Display *m_display;
 	Camera *m_camera;
-	int m_workers;
 	std::vector<Light> m_lights;
 	std::vector<Sphere> m_spheres;
 	std::vector<Plane> m_planes;
