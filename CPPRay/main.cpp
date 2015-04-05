@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 8, 128);
+	Camera camera = Camera(vec3(0, 1, -1), quaternion().identity(), vec3(1), 8, 128);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 	SDL_Event event;
 
 	// Seed the rng
-	srand(static_cast<unsigned>(time_t(0)));
+	//srand(static_cast<unsigned>(time_t(0)));
 
 	// Initialize deltaTime related variables
 	int frames = 0;
@@ -57,12 +57,8 @@ int main(int argc, char** argv)
 		// Calculate frames per second
 		frameTime = 1.0f / deltaTime;
 
-		// Display info after 1000 frames
-		if (frames >= 100)
-		{
-			std::cout << "deltaTime: " << deltaTime << "s" << " | frameTime: " << frameTime << "FPS" << std::endl;
-			frames = 0;
-		}
+		// Display info in console
+		std::cout << "deltaTime: " << deltaTime << "s" << " | frameTime: " << frameTime << "FPS" << std::endl;
 
 		// Calculate rendering of the scene
 		engine.update(deltaTime);
@@ -71,9 +67,6 @@ int main(int argc, char** argv)
 		display.render();
 
 		// Handle input
-		if (Input::g_keys[SDL_SCANCODE_SPACE])
-			engine.clearSamples();
-
 		if (Input::g_keys[SDL_SCANCODE_W])
 			camera.move(camera.getTransform().getRotation().getForwardVector(), deltaTime);
 		else if (Input::g_keys[SDL_SCANCODE_S])
@@ -98,6 +91,13 @@ int main(int argc, char** argv)
 			camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
 		else if (Input::g_keys[SDL_SCANCODE_E])
 			camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
+
+		// Clear all samples if any key is pressed
+		for (unsigned int i = 0; i < sizeof(Input::g_keys) / sizeof(*Input::g_keys); i++)
+		{
+			if (Input::g_keys[i])
+				engine.clearSamples();
+		}
 
 		// Process SDL events
 		while (SDL_PollEvent(&event))

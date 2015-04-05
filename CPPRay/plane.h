@@ -5,8 +5,7 @@
 #include "ray.h"
 #include "intersection.h"
 #include "material.h"
-
-using namespace math;
+#include "math.h"
 
 class Plane
 {
@@ -27,12 +26,12 @@ public:
 
 		t = vec3::dot(P, m_normal) / d;
 
-		if (t < 1e-3)
+		if (t < EPSILON)
 			return Intersection::invalidIntersection;
 
 		auto &x = Intersection();
 		x.setPosition(r.getOrigin() + r.getDirection() * t);
-		x.setNormal(m_normal);
+		x.setNormal(m_normal.normalize());
 		x.setT(t);
 		x.setMaterial(m_material);
 

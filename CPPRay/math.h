@@ -8,6 +8,24 @@
 namespace math
 {
 
+#define EPSILON 1e-3f
+#define PI 3.14159265359f
+#define PI_1 1.0f / PI
+
+	static float pseudorand(unsigned short xsubi[3])
+	{
+		return static_cast<float>(rand()) /  static_cast<float>(RAND_MAX);
+	}
+
+	static vec3 pow(const vec3 &v, float f)
+	{
+		auto x = std::pow(v.x, f);
+		auto y = std::pow(v.y, f);
+		auto z = std::pow(v.z, f);
+
+		return vec3(x, y, z);
+	}
+
 	static float clamp(float f, float min, float max)
 	{
 		return std::max(min, std::min(f, max));

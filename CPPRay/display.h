@@ -36,6 +36,7 @@ public:
 		if (x < 0 || x >= m_width || y < 0 || y >= m_height)
 			return;
 
+		v = math::pow(v, 1.0f / 2.2f);
 		v = math::clamp(v, 0.0f, 1.0f);
 
 		auto r = static_cast<Uint32>(v.x * 255.0f);

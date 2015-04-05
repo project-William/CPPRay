@@ -1,8 +1,6 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
-#define PI 3.14159265359f
-
 #include <string>
 #include <cmath>
 #include "vec3.h"
@@ -17,21 +15,7 @@ namespace math
 	{
 		float w, x, y, z;
 
-		quaternion(float w, float x, float y, float z)
-		{
-			this->w = w;
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-
-		quaternion()
-		{
-			w = 0.0f;
-			x = 0.0f;
-			y = 0.0f;
-			z = 0.0f;
-		}
+		quaternion(float w = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f) : w(w), x(x), y(y), z(z) { }
 
 		std::string toString() const
 		{

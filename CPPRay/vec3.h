@@ -9,30 +9,14 @@
 namespace math
 {
 
+	// Forward declarations of functions that are included in the namespace 'math'
+	extern float pseudorand(unsigned short xsubi[3]);
+
 	struct vec3
 	{
 		float x, y, z;
 
-		vec3(float x, float y, float z)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-
-		vec3(float f)
-		{
-			x = f;
-			y = f;
-			z = f;
-		}
-
-		vec3()
-		{
-			x = 0.0f;
-			y = 0.0f;
-			z = 0.0f;
-		}
+		vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f):x(x), y(y), z(z) { }
 
 		std::string toString() const
 		{
@@ -194,30 +178,42 @@ namespace math
 				return reflect(I, N);
 		}
 
+		static vec3 sampleHemisphere(const vec3 &N, unsigned short *Xi)
+		{
+			float r1 = 2.0f * PI * pseudorand(Xi);
+			float r2 = pseudorand(Xi), r2s = std::sqrt(r2);
+			vec3 w = N; // w = normal
+			vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
+			vec3 v = cross(w, u); // v is perpendicular to u and w
+			return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
+		}
+
+		/*
 		static vec3 randomHemisphere(const vec3 &N)
 		{
-			// Calculate a random sphere vector
-			auto phi = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f * PI;
-			auto rq = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-			auto r = std::sqrt(rq);
+		// Calculate a random sphere vector
+		auto phi = -(2.0f * PI) + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (2.0f * PI - -2.0f * PI)));
+		auto rq = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		auto r = std::sqrt(rq);
 
-			auto V = vec3(r * std::cos(phi), r * std::sin(phi), std::sqrt(1.0f - rq)).normalize();
+		auto V = vec3(r * std::cos(phi), r * std::sin(phi), std::sqrt(1.0f - rq)).normalize();
 
-			// Rotate towards N if required
-			auto dot = N.z;
+		// Rotate towards N if required
+		auto dot = N.z;
 
-			if (dot > 0.9999f)
-				return V;
+		if (dot > 0.9999f)
+		return V;
 
-			if (dot < -0.9999f)
-				return vec3(V.x, V.y, -V.z);
+		if (dot < -0.9999f)
+		return vec3(V.x, V.y, -V.z);
 
-			vec3 up = vec3(0, 0, 1);
-			vec3 a1 = cross(up, N).normalize();
-			vec3 a2 = cross(a1, N).normalize();
+		vec3 up = vec3(0, 0, 1);
+		vec3 a1 = cross(up, N).normalize();
+		vec3 a2 = cross(a1, N).normalize();
 
-			return (a1 * V.x + a2 * V.y + N * V.z).normalize();
+		return (a1 * V.x + a2 * V.y + N * V.z).normalize();
 		}
+		*/
 	};
 
 }

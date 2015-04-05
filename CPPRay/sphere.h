@@ -5,8 +5,7 @@
 #include "ray.h"
 #include "intersection.h"
 #include "material.h"
-
-using namespace math;
+#include "math.h"
 
 class Sphere
 {
@@ -27,7 +26,7 @@ public:
 			return Intersection::invalidIntersection;
 
 		d = std::sqrt(d);
-		t = (t = b - d) > 1e-3 ? t : ((t = b + d) > 1e-3 ? t : -1.0f);
+		t = (t = b - d) > EPSILON ? t : ((t = b + d) > EPSILON ? t : -1.0f);
 
 		if (t == -1.0f)
 			return Intersection::invalidIntersection;
