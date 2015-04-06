@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <vector>
+#include <memory>
 #include "display.h"
 #include "config.h"
 #include "math.h"
@@ -10,8 +11,10 @@
 #include "mat4.h"
 #include "sphere.h"
 #include "plane.h"
+#include <iostream>
 #include "intersection.h"
 #include "camera.h"
+#include "scene.h"
 
 using namespace math;
 
@@ -22,21 +25,21 @@ public:
 	~Engine();
 
 	void update(float dt);
-	void renderPT();
-	void clearSamples();
-private:
+	void renderPT(int swidth, int sheight, int xoffset, int yoffset);
 	vec3 pathtrace(const Ray &r, int n, float weight, unsigned short *Xi);
+	void clearSamples();
+	int getSamplesPPX();
+private:
 	Intersection intersect(const Ray &r, float t);
 
 	static const vec3 COLOR_NULL;
 	static const vec3 COLOR_AMBI;
 
-	int m_samplesppxl;
+	int m_samplesppx;
 	vec3 *m_samples;
+	Scene m_scene;
 	Display *m_display;
 	Camera *m_camera;
-	std::vector<Sphere> m_spheres;
-	std::vector<Plane> m_planes;
 };
 
 

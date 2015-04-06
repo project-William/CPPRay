@@ -10,6 +10,9 @@ using namespace math;
 
 int main(int argc, char** argv)
 {
+	// Disable cin/cout synchronization with C library buffers
+	std::ios_base::sync_with_stdio(false);
+
 	// Boolean which is used to check if the program is running or not
 	bool running = true;
 
@@ -28,7 +31,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 1, -1), quaternion().identity(), vec3(1), 8, 128);
+	Camera camera = Camera(vec3(0, 1, -1), quaternion().identity(), vec3(1), 2, 64);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -36,16 +39,12 @@ int main(int argc, char** argv)
 	// Create SDL_Event object
 	SDL_Event event;
 
-	// Seed the rng
-	//srand(static_cast<unsigned>(time_t(0)));
-
-	// Initialize deltaTime related variables
-	int frames = 0;
-	int currentFrame = 0;
-	int lastFrame = SDL_GetTicks();
+	// Initialize rendering and updating related variables
+	unsigned int frames = 0;
+	unsigned int currentFrame = 0;
+	unsigned int lastFrame = SDL_GetTicks();
 	float deltaTime = 0;
 	float frameTime = 0;
-	bool rendered = false;
 
 	while (running)
 	{
@@ -58,12 +57,12 @@ int main(int argc, char** argv)
 		frameTime = 1.0f / deltaTime;
 
 		// Display info in console
-		std::cout << "deltaTime: " << deltaTime << "s" << " | frameTime: " << frameTime << "FPS" << std::endl;
+		std::cout << "dt: " << deltaTime << "s" << " | FPS: " << frameTime << " | SPPX: " << engine.getSamplesPPX() << "\n";
 
 		// Calculate rendering of the scene
 		engine.update(deltaTime);
 		display.clear(0x00000000);
-		engine.renderPT();
+		engine.renderPT(WIDTH, HEIGHT, 0, 0);
 		display.render();
 
 		// Handle input

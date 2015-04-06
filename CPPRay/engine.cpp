@@ -8,31 +8,9 @@ Engine::Engine(Display *display, Camera *camera)
 {
 	m_samples = new vec3[WIDTH * HEIGHT];
 	clearSamples();
+	m_scene = Scene();
 	m_display = display;
 	m_camera = camera;
-
-
-
-	//// SCENE DATA BELOW
-	Material mat_l_w = Material(vec3(5, 5, 5), vec3(0), 1, DIFF);
-	Material mat_d_w = Material(vec3(), vec3(0.75f, 0.75f, 0.75f), 1, DIFF);
-	Material mat_d_r = Material(vec3(), vec3(0.75f, 0.25f, 0.25f), 1, DIFF);
-	Material mat_d_g = Material(vec3(), vec3(0.25f, 0.75f, 0.25f), 1, DIFF);
-	Material mat_d_b = Material(vec3(), vec3(0.25f, 0.25f, 0.75f), 1, DIFF);
-	Material mat_d_y = Material(vec3(), vec3(0.75f, 0.75f, 0.25f), 1, DIFF);
-	Material mat_mir = Material(vec3(), vec3(0.9f, 1, 0.9f), 1, SPEC);
-	Material mat_gla = Material(vec3(), vec3(0.9f, 1, 1), 1.52f, REFR);
-
-	//m_spheres.push_back(Sphere(vec3(0, 4, -5), 1, mat_l_w));
-	m_spheres.push_back(Sphere(vec3(1, 0.5f, -5), 0.5f, mat_mir));
-	m_spheres.push_back(Sphere(vec3(-1, 0.5f, -4), 0.5f, mat_gla));
-
-	m_planes.push_back(Plane(vec3(0, 0, 0), vec3(0, 1, 0), mat_d_w));
-	m_planes.push_back(Plane(vec3(0, 4, 0), vec3(0, -1, 0), mat_l_w));
-	m_planes.push_back(Plane(vec3(2, 0, 0), vec3(-1, 0, 0), mat_d_b));
-	m_planes.push_back(Plane(vec3(-2, 0, 0), vec3(1, 0, 0), mat_d_r));
-	m_planes.push_back(Plane(vec3(0, 0, -8), vec3(0, 0, 1), mat_d_w));
-	m_planes.push_back(Plane(vec3(0, 0, 0), vec3(0, 0, -1), mat_d_w));
 }
 
 Engine::~Engine()
@@ -47,7 +25,7 @@ void Engine::update(float dt)
 
 }
 
-void Engine::renderPT()
+void Engine::renderPT(int swidth, int sheight, int xoffset, int yoffset)
 {
 	auto w = m_display->getWidth();
 	auto h = m_display->getHeight();
@@ -57,14 +35,14 @@ void Engine::renderPT()
 	quaternion &q_inv = q.conjugate();
 
 	// Increase samplecounter by one
-	m_samplesppxl++;
+	m_samplesppx++;
 
-	for (int y = 0; y < h; y++)
+	for (int y = yoffset; y < yoffset + sheight; y++)
 	{
 		// Generate seed for RNG each row
 		unsigned short Xi[3] = {0, 0, y * y * y};
 
-		for (int x = 0; x < w; x++)
+		for (int x = xoffset; x < xoffset + swidth; x++)
 		{
 			// Pixel's color value
 			auto &radiance = vec3();
@@ -119,7 +97,7 @@ void Engine::renderPT()
 #endif
 
 			// Set the pixel color to the desired value
-			m_display->setPixel(x, y, m_samples[x + y * WIDTH] / static_cast<float>(m_samplesppxl));
+			m_display->setPixel(x, y, m_samples[x + y * WIDTH] / static_cast<float>(m_samplesppx));
 		}
 	}
 }
@@ -130,7 +108,7 @@ Intersection Engine::intersect(const Ray &r, float t)
 	auto xFinal = Intersection::invalidIntersection;
 
 	// Find the nearest intersection against a sphere if there's any
-	for (auto &s : m_spheres)
+	for (auto &s : m_scene.getSceneSpheres())
 	{
 		xInit = s.intersect(r);
 
@@ -142,7 +120,7 @@ Intersection Engine::intersect(const Ray &r, float t)
 	}
 
 	// Find the nearest intersection against a plane if there's any
-	for (auto &p : m_planes)
+	for (auto &p : m_scene.getScenePlanes())
 	{
 		xInit = p.intersect(r);
 
@@ -163,5 +141,10 @@ void Engine::clearSamples()
 		m_samples[i] = COLOR_NULL;
 	}
 
-	m_samplesppxl = 0;
+	m_samplesppx = 0;
+}
+
+int Engine::getSamplesPPX()
+{
+	return m_samplesppx;
 }

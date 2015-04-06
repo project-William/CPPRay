@@ -50,19 +50,11 @@ vec3 Engine::pathtrace(const Ray &r, int n, float weight, unsigned short *Xi)
 		auto NdotH = std::abs(vec3::dot(Nr_vector, H_vector));
 		auto VdotH = std::abs(vec3::dot(V_vector, H_vector));
 
-		// Evaluate the geometric term
-		auto geo_numer = 2.0f * NdotH;
-		auto geo_denom = VdotH;
-		auto geometric = std::min(1.0f, std::min((geo_numer * NdotV) / geo_denom,(geo_numer * NdotL) / geo_denom));
-
-		// Calculate the final shading value
-		float Rs = geometric / (NdotV * NdotL + 1e-3f);
-
 		// Calculate the bidirectional reflectance function value
-		vec3 BRDF = M_info.getReflectance() + (Rs * 0.1f);
+		vec3 BRDF = M_info.getReflectance() * NdotL;
 
-		// Calculate the contributed final light amount
-		vec3 REFL = pathtrace(Ray(P_vector, L_rand), n + 1, weight, Xi) * NdotL;
+		// Calculate the contributed reflected light amount
+		vec3 REFL = pathtrace(Ray(P_vector, L_rand), n + 1, weight, Xi);
 
 		// Apply the final color to the radiance amount
 		return BRDF * REFL * PI_1;
