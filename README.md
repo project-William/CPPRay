@@ -17,9 +17,15 @@ Windows build: TDM GCC Compiler, All possible optimizations, -O3, x64
 Windows build: Visual C++ Compiler, All possible optimizations, -O3, x64
 
 Configuration used while testing:
+
 WIDTH 128
+
 HEIGHT 128
+
 SCALE 2
+
 RECURSION_MAX 5
+
 MAXDISTANCE 128
+
 SUPERSAMPLINGLEVEL 0
