@@ -1,12 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define WIDTH 512
-#define HEIGHT 512
-#define SCALE 1
-#define RECURSION_MAX 6
+#define WIDTH 128
+#define HEIGHT 128
+#define SCALE 2
+#define RECURSION_MAX 3
 #define MAXDISTANCE 128
-#define SUPERSAMPLINGLEVEL 4
-#define SUPERSAMPLINGJITTER 0.001f
+#define SUPERSAMPLINGLEVEL 0
+#define SUPERSAMPLINGJITTER 0.0005f
 
 #endif

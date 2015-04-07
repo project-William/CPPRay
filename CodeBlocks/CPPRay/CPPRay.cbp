@@ -10,24 +10,24 @@
 				<Option output="bin/Debug/CPPRay" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="tdm_gcc_x64x86" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
 					<Add option="-fpermissive" />
 					<Add option="-lrt" />
-					<Add directory="../SDL2-2.0.3/i686-w64-mingw32/include/SDL2" />
+					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
 					<Add option="-lmingw32 -lSDL2main -lSDL2" />
-					<Add directory="../SDL2-2.0.3/i686-w64-mingw32/lib" />
+					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/CPPRay" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="tdm_gcc_x64x86" />
 				<Compiler>
 					<Add option="-march=corei7-avx" />
 					<Add option="-fomit-frame-pointer" />
@@ -37,12 +37,15 @@
 					<Add option="-fpermissive" />
 					<Add option="-lrt" />
 					<Add option="-fexceptions" />
-					<Add directory="../SDL2-2.0.3/i686-w64-mingw32/include/SDL2" />
+					<Add option="-Ofast" />
+					<Add option="-m64" />
+					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lmingw32 -lSDL2main -lSDL2" />
-					<Add directory="../SDL2-2.0.3/i686-w64-mingw32/lib" />
+					<Add option="-flto" />
+					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/lib" />
 				</Linker>
 			</Target>
 		</Build>
@@ -51,11 +54,11 @@
 			<Add option="-fpermissive" />
 			<Add option="-lrt" />
 			<Add option="-fexceptions" />
-			<Add directory="../SDL2-2.0.3/i686-w64-mingw32/include/SDL2" />
+			<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDL2main -lSDL2" />
-			<Add directory="../SDL2-2.0.3/i686-w64-mingw32/lib" />
+			<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="camera.cpp" />
 		<Unit filename="camera.h" />
