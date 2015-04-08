@@ -16,6 +16,7 @@
 					<Add option="-g" />
 					<Add option="-fpermissive" />
 					<Add option="-lrt" />
+					<Add option="-fexceptions" />
 					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
@@ -37,13 +38,11 @@
 					<Add option="-lrt" />
 					<Add option="-fexceptions" />
 					<Add option="-Ofast" />
-					<Add option="-lfto" />
 					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lmingw32 -lSDL2main -lSDL2" />
-					<Add option="-flto" />
 					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/lib" />
 				</Linker>
 			</Target>
@@ -67,21 +66,16 @@
 		<Unit filename="engine.cpp" />
 		<Unit filename="engine.h" />
 		<Unit filename="input.h" />
-		<Unit filename="intersection.cpp" />
 		<Unit filename="intersection.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="material.h" />
 		<Unit filename="math.h" />
 		<Unit filename="pathtrace.h" />
-		<Unit filename="plane.cpp" />
 		<Unit filename="plane.h" />
 		<Unit filename="quaternion.h" />
-		<Unit filename="ray.cpp" />
 		<Unit filename="ray.h" />
 		<Unit filename="scene.h" />
-		<Unit filename="sphere.cpp" />
 		<Unit filename="sphere.h" />
-		<Unit filename="transform.cpp" />
 		<Unit filename="transform.h" />
 		<Unit filename="vec3.h" />
 		<Extensions>

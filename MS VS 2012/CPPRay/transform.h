@@ -9,22 +9,41 @@ using namespace math;
 class Transform
 {
 public:
-	Transform(vec3 position, quaternion rotation, vec3 scale);
-	Transform();
+    Transform(vec3 position = vec3(), quaternion rotation = quaternion().identity(), vec3 scale = vec3()) : m_position(position), m_rotation(rotation), m_scale(scale) { }
 
-	void update(float dt);
+    void setPosition(const vec3 v)
+    {
+        m_position = v;
+    }
 
-	void setPosition(vec3 v);
-	void setRotation(quaternion q);
-	void setScale(vec3 v);
+    void setRotation(const quaternion q)
+    {
+        m_rotation = q;
+    }
 
-	vec3 getPosition() const;
-	quaternion getRotation() const;
-	vec3 getScale() const;
+    void setScale(const vec3 v)
+    {
+        m_scale = v;
+    }
+
+    vec3 getPosition() const
+    {
+        return m_position;
+    }
+
+    quaternion getRotation() const
+    {
+        return m_rotation;
+    }
+
+    vec3 getScale() const
+    {
+        return m_scale;
+    }
 private:
-	vec3 m_position;
-	quaternion m_rotation;
-	vec3 m_scale;
+    vec3 m_position;
+    quaternion m_rotation;
+    vec3 m_scale;
 };
 
 #endif

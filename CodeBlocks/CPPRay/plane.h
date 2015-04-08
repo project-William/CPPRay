@@ -10,37 +10,36 @@
 class Plane
 {
 public:
-	Plane(vec3 position, vec3 normal, Material material);
-	Plane();
+    Plane(vec3 position = vec3(), vec3 normal = vec3(0, 1, 0), Material material = Material()) : m_position(position), m_normal(normal), m_material(material) { }
 
-	Intersection intersect(const Ray &r) const
-	{
-		vec3 P;
-		float d, t;
+    Intersection intersect(const Ray &r) const
+    {
+        vec3 P;
+        float d, t;
 
-		P = m_position - r.getOrigin();
-		d = vec3::dot(m_normal, r.getDirection());
+        P = m_position - r.getOrigin();
+        d = vec3::dot(m_normal, r.getDirection());
 
-		if (d > 0.0f)
-			return Intersection::invalidIntersection;
+        if (d > 0.0f)
+            return invalidIntersection;
 
-		t = vec3::dot(P, m_normal) / d;
+        t = vec3::dot(P, m_normal) / d;
 
-		if (t < EPSILON)
-			return Intersection::invalidIntersection;
+        if (t < EPSILON)
+            return invalidIntersection;
 
-		auto x = Intersection();
-		x.setPosition(r.getOrigin() + r.getDirection() * t);
-		x.setNormal(m_normal.normalize());
-		x.setT(t);
-		x.setMaterial(m_material);
+        auto x = Intersection();
+        x.setPosition(r.getOrigin() + r.getDirection() * t);
+        x.setNormal(m_normal.normalize());
+        x.setT(t);
+        x.setMaterial(m_material);
 
-		return x;
-	}
+        return x;
+    }
 private:
-	vec3 m_position;
-	vec3 m_normal;
-	Material m_material;
+    vec3 m_position;
+    vec3 m_normal;
+    Material m_material;
 protected:
 };
 

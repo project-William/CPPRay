@@ -29,7 +29,7 @@ public:
 		//m_spheres.push_back(Sphere(vec3(0, 3, -5), 1, mat_l_w)); // Light
 		m_spheres.push_back(Sphere(vec3(1, 0.5f, -5), 0.5f, mat_m_w));
 		m_spheres.push_back(Sphere(vec3(-1, 0.5f, -4), 0.5f, mat_g_w));
-		m_spheres.push_back(Sphere(vec3(1.4f, 0.25f, -4), 0.25f, mat_g_y));
+		m_spheres.push_back(Sphere(vec3(-1, 1.25f, -4), 0.25f, mat_g_y));
 		m_spheres.push_back(Sphere(vec3(0.25f, 0.25f, -3.75f), 0.25f, mat_g_p));
 		m_spheres.push_back(Sphere(vec3(-1.5f, 2.5f, -6), 0.5f, mat_g_c));
 		m_spheres.push_back(Sphere(vec3(-1, 0.5f, -1), 0.5f, mat_d_w));
@@ -42,18 +42,18 @@ public:
 		m_planes.push_back(Plane(vec3(0, 0, 0), vec3(0, 0, -1), mat_d_g));
 	}
 
-	std::vector<Sphere> getSceneSpheres()
-	{
-		return m_spheres;
-	}
+    std::vector<Sphere> getSceneSpheres()
+    {
+        return m_spheres;
+    }
 
-	std::vector<Plane> getScenePlanes()
-	{
-		return m_planes;
-	}
+    std::vector<Plane> getScenePlanes()
+    {
+        return m_planes;
+    }
 private:
-	std::vector<Sphere> m_spheres;
-	std::vector<Plane> m_planes;
+    std::vector<Sphere> m_spheres;
+    std::vector<Plane> m_planes;
 protected:
 };
 

@@ -20,26 +20,25 @@ using namespace math;
 class Engine
 {
 public:
-	Engine(Display *display, Camera *camera);
-	~Engine();
+    Engine(Display *display, Camera *camera);
+    ~Engine();
 
-	void update(float dt);
-	void render(int swidth, int sheight, int xoffset, int yoffset);
-	vec3 pathtrace(const Ray &r, int n, float weight, unsigned short *Xi);
-	void clearSamples();
-	int getSamplesPPX();
+    void update(float dt);
+    void render(int swidth, int sheight, int xoffset, int yoffset);
+    vec3 pathtrace(const Ray &r, int n, unsigned short *Xi);
+    void clearSamples();
+    int getSamplesPPX();
 private:
-	Intersection intersect(const Ray &r, float t);
+    Intersection intersect(const Ray &r, float t);
 
-	static const vec3 COLOR_NULL;
-	static const vec3 COLOR_AMBI;
+    static const vec3 COLOR_NULL;
+    static const vec3 COLOR_AMBI;
 
-	int m_samplesppx;
-	vec3 *m_samples;
-	std::vector<Intersection> m_xLights;
-	Scene m_scene;
-	Display *m_display;
-	Camera *m_camera;
+    int m_samplesppx;
+    vec3 *m_samples;
+    Scene m_scene;
+    Display *m_display;
+    Camera *m_camera;
 };
 
 #endif

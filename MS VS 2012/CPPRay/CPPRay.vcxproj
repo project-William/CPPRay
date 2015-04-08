@@ -164,12 +164,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="display.cpp" />
     <ClCompile Include="engine.cpp" />
-    <ClCompile Include="intersection.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="plane.cpp" />
-    <ClCompile Include="ray.cpp" />
-    <ClCompile Include="sphere.cpp" />
-    <ClCompile Include="transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
