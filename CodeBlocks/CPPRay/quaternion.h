@@ -62,7 +62,7 @@ namespace math
 			return quaternion(w, -x, -y, -z);
 		}
 
-		quaternion createFromAxisAngle(float x, float y, float z, float theta)
+		quaternion euler(float x, float y, float z, float theta)
 		{
 			theta = theta * PI / 180.0f;
 

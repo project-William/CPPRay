@@ -11,7 +11,7 @@ using namespace math;
 class Display
 {
 public:
-	Display(char *title, int width, int height, int scale);
+	Display(const char *title, int width, int height, int scale);
 	~Display();
 
 	int init();
@@ -47,16 +47,16 @@ public:
 		m_pixels[x + y * m_width] = hex;
 	}
 
-	void setTitle(char *title);
+	void setTitle(const char *title);
 
-	int getWidth() { return m_width; }
-	int getHeight() { return m_height; }
-	float getAspectRatio() { return static_cast<float>(m_width) / m_height; }
-	SDL_Window *getWindow() { return m_window; }
-	SDL_Renderer *getRenderer() { return m_renderer; }
-	SDL_Texture *getTexture() { return m_texture; }
+	int getWidth() const { return m_width; }
+	int getHeight() const { return m_height; }
+	float getAspectRatio() const { return static_cast<float>(m_width) / m_height; }
+	SDL_Window *getWindow() const { return m_window; }
+	SDL_Renderer *getRenderer() const { return m_renderer; }
+	SDL_Texture *getTexture() const { return m_texture; }
 private:
-	char *m_title;
+	const char *m_title;
 	int m_width;
 	int m_height;
 	int m_scale;

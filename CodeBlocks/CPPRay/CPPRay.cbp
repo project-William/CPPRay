@@ -29,7 +29,6 @@
 				<Option type="1" />
 				<Option compiler="tdm_gcc_x64x86" />
 				<Compiler>
-					<Add option="-march=corei7-avx" />
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
@@ -38,7 +37,7 @@
 					<Add option="-lrt" />
 					<Add option="-fexceptions" />
 					<Add option="-Ofast" />
-					<Add option="-m64" />
+					<Add option="-lfto" />
 					<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/include/SDL2" />
 				</Compiler>
 				<Linker>
@@ -71,7 +70,6 @@
 		<Unit filename="intersection.cpp" />
 		<Unit filename="intersection.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="mat4.h" />
 		<Unit filename="material.h" />
 		<Unit filename="math.h" />
 		<Unit filename="pathtrace.h" />

@@ -29,7 +29,7 @@ public:
 		if (t < EPSILON)
 			return Intersection::invalidIntersection;
 
-		auto &x = Intersection();
+		auto x = Intersection();
 		x.setPosition(r.getOrigin() + r.getDirection() * t);
 		x.setNormal(m_normal.normalize());
 		x.setT(t);

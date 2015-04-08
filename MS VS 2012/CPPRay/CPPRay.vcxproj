@@ -149,7 +149,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalOptions>/Ox /Ob2 /Oi /Ot /Oy /GT /GL /fp:fast /arch:avx2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Ox /Ob2 /Oi /Ot /Oy /GT /GL /fp:fast %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

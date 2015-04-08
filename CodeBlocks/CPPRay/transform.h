@@ -3,7 +3,6 @@
 
 #include "vec3.h"
 #include "quaternion.h"
-#include "mat4.h"
 
 using namespace math;
 
@@ -19,7 +18,6 @@ public:
 	void setRotation(quaternion q);
 	void setScale(vec3 v);
 
-	mat4 getTransformation() const;
 	vec3 getPosition() const;
 	quaternion getRotation() const;
 	vec3 getScale() const;

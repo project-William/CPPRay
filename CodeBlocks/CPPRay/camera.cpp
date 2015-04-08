@@ -21,7 +21,7 @@ void Camera::move(const vec3 &direction, float dt)
 
 void Camera::rotate(const vec3 &axis, float dt)
 {
-	auto q = quaternion().createFromAxisAngle(axis.x, axis.y, axis.z, m_sensitivity * dt);
+	auto q = quaternion().euler(axis.x, axis.y, axis.z, m_sensitivity * dt);
 	m_transform.setRotation((q * m_transform.getRotation()).normalize());
 }
 

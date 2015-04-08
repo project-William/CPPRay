@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include "vec3.h"
 
 namespace math
@@ -11,11 +12,6 @@ namespace math
 #define EPSILON 1e-3f
 #define PI 3.14159265359f
 #define PI_1 1.0f / PI
-
-	static float pseudorand(unsigned short xsubi[3])
-	{
-		return static_cast<float>(rand()) /  static_cast<float>(RAND_MAX);
-	}
 
 	static vec3 pow(const vec3 &v, float f)
 	{

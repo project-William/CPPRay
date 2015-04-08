@@ -1,6 +1,6 @@
 #include "display.h"
 
-Display::Display(char *title, int width, int height, int scale)
+Display::Display(const char *title, int width, int height, int scale)
 {
 	m_title = title;
 	m_width = width;
@@ -88,7 +88,7 @@ void Display::render()
 	SDL_RenderPresent(m_renderer);
 }
 
-void Display::setTitle(char *title)
+void Display::setTitle(const char *title)
 {
 	m_title = title;
 	SDL_SetWindowTitle(m_window, m_title);

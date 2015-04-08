@@ -1,7 +1,7 @@
 CPPRay
 ====
 
-a Minimalistic pathtracer written in C++.
+a Minimalistic pathtracer written in C++, inspiration taken from projects like smallpt.
 
 ![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/cppray.png)
 

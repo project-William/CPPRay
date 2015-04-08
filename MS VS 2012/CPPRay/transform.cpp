@@ -34,15 +34,6 @@ void Transform::setScale(vec3 v)
 	m_scale = v;
 }
 
-mat4 Transform::getTransformation() const
-{
-	auto &translation = mat4().initTranslation(m_position.x, m_position.y, m_position.z);
-	auto &rotation = mat4().initRotation(m_rotation.w, m_rotation.x, m_rotation.y, m_rotation.z);
-	auto &scale = mat4().initScale(m_scale.x, m_scale.y, m_scale.z);
-
-	return translation * rotation * scale;
-}
-
 vec3 Transform::getPosition() const
 {
 	return m_position;

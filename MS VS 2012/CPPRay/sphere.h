@@ -31,7 +31,7 @@ public:
 		if (t == -1.0f)
 			return Intersection::invalidIntersection;
 
-		auto &x = Intersection();
+		auto x = Intersection();
 		x.setPosition(r.getOrigin() + r.getDirection() * t);
 		x.setNormal((x.getPosition() - m_position) / m_radius);
 		x.setT(t);

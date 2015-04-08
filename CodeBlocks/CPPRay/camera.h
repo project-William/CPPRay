@@ -3,7 +3,6 @@
 
 #include "vec3.h"
 #include "quaternion.h"
-#include "mat4.h"
 #include "transform.h"
 
 using namespace math;

@@ -24,7 +24,7 @@ namespace math
 
 		quaternion operator*(const quaternion &q) const
 		{
-			auto &result = quaternion();
+			auto result = quaternion();
 
 			result.w = w * q.w - x * q.x - y * q.y - z * q.z;
 			result.x = w * q.x + x * q.w + y * q.z - z * q.y;
@@ -36,7 +36,7 @@ namespace math
 
 		quaternion operator*(const vec3 &v) const
 		{
-			auto &result = quaternion();
+			auto result = quaternion();
 
 			result.w = -x * v.x - y * v.y - z * v.z;
 			result.x = w * v.x + y * v.z - z * v.y;
@@ -62,7 +62,7 @@ namespace math
 			return quaternion(w, -x, -y, -z);
 		}
 
-		quaternion createFromAxisAngle(float x, float y, float z, float theta)
+		quaternion euler(float x, float y, float z, float theta)
 		{
 			theta = theta * PI / 180.0f;
 
@@ -102,7 +102,7 @@ namespace math
 
 	inline vec3 operator*(const vec3 &v, const quaternion &q)
 	{
-		auto &result = quaternion();
+		auto result = quaternion();
 		result = q * v * q.conjugate();
 		return vec3(result.x, result.y, result.z);
 	}

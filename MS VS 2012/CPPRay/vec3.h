@@ -9,8 +9,11 @@
 namespace math
 {
 
-	// Forward declarations of functions that are included in the namespace 'math'
-	extern float pseudorand(unsigned short xsubi[3]);
+    // Forward declaration(s) for functions that are in the 'math' namespace
+    static float pseudorand(unsigned short xsubi[3])
+	{
+		return static_cast<float>(rand()) /  static_cast<float>(RAND_MAX);
+	}
 
 	struct vec3
 	{
@@ -168,21 +171,11 @@ namespace math
 			return I - (N * dot(N, I) * 2.0f);
 		}
 
-		static vec3 refract(const vec3 &I, const vec3 &N, float NdotI, float eta, float cos_t)
+		static vec3 sampleSphere(unsigned short *Xi)
 		{
-			cos_t = std::sqrt(1.0f - cos_t);
-
-			if (cos_t < 1.0f)
-				return I * eta - N * (eta * dot(N, I) + cos_t);
-			else
-				return reflect(I, N);
-		}
-
-		static vec3 sampleSphere(const vec3 &N, unsigned short *Xi)
-		{
-			auto x = std::cos(2.0f * PI * pseudorand(Xi));
-			auto y = std::sin(2.0f * PI * pseudorand(Xi));
-			auto z = std::sin(2.0f * PI * pseudorand(Xi));
+			float x = std::cos(2.0f * PI * pseudorand(Xi));
+			float y = std::sin(2.0f * PI * pseudorand(Xi));
+			float z = std::sin(2.0f * PI * pseudorand(Xi));
 
 			return vec3(x, y, z).normalize();
 		}

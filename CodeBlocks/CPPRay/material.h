@@ -15,22 +15,22 @@ class Material
 public:
 	Material(vec3 em = vec3(), vec3 re = vec3(), float ior = 1.52f, Refl_t refl_t = DIFF):m_emittance(em), m_reflectance(re), m_ior(ior), m_refl_t(refl_t) { }
 
-	vec3 Material::getEmittance() const
+	vec3 getEmittance() const
 	{
 		return m_emittance;
 	}
 
-	vec3 Material::getReflectance() const
+	vec3 getReflectance() const
 	{
 		return m_reflectance;
 	}
 
-	float Material::getIOR() const
+	float getIOR() const
 	{
 		return m_ior;
 	}
 
-	Refl_t Material::getReflT() const
+	Refl_t getReflT() const
 	{
 		return m_refl_t;
 	}

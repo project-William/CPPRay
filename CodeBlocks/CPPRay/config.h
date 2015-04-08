@@ -3,8 +3,8 @@
 
 #define WIDTH 128
 #define HEIGHT 128
-#define SCALE 2
-#define RECURSION_MAX 3
+#define SCALE 4
+#define RECURSION_MAX 5
 #define MAXDISTANCE 128
 #define SUPERSAMPLINGLEVEL 0
 #define SUPERSAMPLINGJITTER 0.001f

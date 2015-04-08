@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
 
 	// Initialize the main camera
-	Camera camera = Camera(vec3(0, 1, -1), quaternion().identity(), vec3(1), 2, 64);
+	Camera camera = Camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 2, 64);
 
 	// Initialize the main engine object that handles the tracing
 	Engine engine(&display, &camera);
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 		// Calculate rendering of the scene
 		engine.update(deltaTime);
 		display.clear(0x00000000);
-		engine.renderPT(WIDTH, HEIGHT, 0, 0);
+		engine.render(WIDTH, HEIGHT, 0, 0);
 		display.render();
 
 		// Handle input
@@ -93,10 +93,8 @@ int main(int argc, char** argv)
 
 		// Clear all samples if any key is pressed
 		for (unsigned int i = 0; i < sizeof(Input::g_keys) / sizeof(*Input::g_keys); i++)
-		{
 			if (Input::g_keys[i])
 				engine.clearSamples();
-		}
 
 		// Process SDL events
 		while (SDL_PollEvent(&event))

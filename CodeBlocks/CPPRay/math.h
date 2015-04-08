@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include "vec3.h"
 
 namespace math
