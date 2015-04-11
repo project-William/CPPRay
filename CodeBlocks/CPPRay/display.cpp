@@ -17,7 +17,7 @@ Display::Display(const char *title, int width, int height, int scale)
         std::exit(1);
     }
 
-    std::cout << "Initialized a new display succesfully!" << std::endl;
+    std::cout << "Initialized a new Display succesfully." << std::endl;
 }
 
 Display::~Display()

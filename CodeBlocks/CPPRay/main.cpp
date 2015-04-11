@@ -1,7 +1,5 @@
 #include <iostream>
-#include <string>
 #include <thread>
-#include <mutex>
 #include "SDL.h"
 #include "config.h"
 #include "display.h"
@@ -38,7 +36,7 @@ int main(int argc, char** argv)
     }
 
     // Initialize the main display object by loading it into the stack
-    Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
+    Display display("C++Ray", WIDTH, HEIGHT, SCALE);
 
     // Initialize the main camera
     Camera camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 2, 64);
@@ -64,8 +62,9 @@ int main(int argc, char** argv)
         lastFrame = currentFrame;
         frameTime = 1.0f / deltaTime;
 
-        // Display info in console
-        std::cout << "dt: " << deltaTime << "s" << " | FPS: " << frameTime << " | SPPX: " << engine.getSamplesPPX() << "\n";
+        // Display info in console every 100th sample
+        if (engine.getSamplesPPX() % 100 == 0)
+            std::cout << "dt: " << deltaTime << "s" << " | FPS: " << frameTime << " | SPPX: " << engine.getSamplesPPX() << std::endl;
 
         // Calculate rendering of the scene
         engine.update(deltaTime);

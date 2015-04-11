@@ -2,18 +2,17 @@
 #define ENGINE_H
 
 #include <vector>
-#include <array>
 #include <memory>
 #include <iostream>
-#include "display.h"
 #include "config.h"
+#include "display.h"
+#include "camera.h"
 #include "math.h"
 #include "vec3.h"
 #include "quaternion.h"
 #include "sphere.h"
 #include "plane.h"
 #include "intersection.h"
-#include "camera.h"
 #include "scene.h"
 
 using namespace math;

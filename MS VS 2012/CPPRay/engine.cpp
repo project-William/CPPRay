@@ -13,7 +13,7 @@ Engine::Engine(Display *display, Camera *camera, unsigned int threads)
     {
         m_sampler[i].samples = new vec3[WIDTH * HEIGHT];
         m_sampler[i].samplesppx = 0;
-        std::cout << "Engine: Created a sampler #" << i << std::endl;
+        std::cout << "Engine: Created a sampler for thread #" << i << std::endl;
     }
 
     clearSamples();
@@ -21,7 +21,7 @@ Engine::Engine(Display *display, Camera *camera, unsigned int threads)
     m_display = display;
     m_camera = camera;
 
-    std::cout << "Initialized a new Engine object succesfully." << std::endl;
+    std::cout << "Initialized a new Engine succesfully." << std::endl;
 }
 
 Engine::~Engine()
