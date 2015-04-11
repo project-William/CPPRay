@@ -42,7 +42,7 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
 
         // Prepare all required information
         auto L_vector = L_rand.negate();
-        auto H_vector = (V_vector + L_vector).normalize();
+        //auto H_vector = (V_vector + L_vector).normalize();
 
         // Calculate all dot products
         auto NdotL = std::abs(vec3::dot(N_vector, L_vector));

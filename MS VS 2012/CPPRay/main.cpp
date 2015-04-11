@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <mutex>
 #include "sdl2/SDL.h"
 #include "config.h"
 #include "display.h"
@@ -16,6 +18,14 @@ int main(int argc, char** argv)
     // Boolean which is used to check if the program is running or not
     bool running = true;
 
+    // Initialize multithreading stuff
+#if THREADS>1
+    const unsigned int tcount = THREADS;
+#else
+    const unsigned int tcount = SDL_GetCPUCount();
+#endif
+    std::thread *threads = new std::thread[tcount];
+
     // Initialize SDL2, close the program if that fails
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -31,10 +41,10 @@ int main(int argc, char** argv)
     Display display("C++ Raytracer / Pathtracer", WIDTH, HEIGHT, SCALE);
 
     // Initialize the main camera
-    Camera camera = Camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 2, 64);
+    Camera camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 2, 64);
 
     // Initialize the main engine object that handles the tracing
-    Engine engine(&display, &camera);
+    Engine engine(&display, &camera, tcount);
 
     // Create SDL_Event object
     SDL_Event event;
@@ -48,12 +58,10 @@ int main(int argc, char** argv)
 
     while (running)
     {
-        // Calculate delta-time
+        // Calculate delta-time & fps
         currentFrame = SDL_GetTicks();
         deltaTime = 0.1f * deltaTime + 0.9f * (float) (currentFrame - lastFrame) / 1000;
         lastFrame = currentFrame;
-
-        // Calculate frames per second
         frameTime = 1.0f / deltaTime;
 
         // Display info in console
@@ -62,7 +70,21 @@ int main(int argc, char** argv)
         // Calculate rendering of the scene
         engine.update(deltaTime);
         display.clear(0x00000000);
-        engine.render(WIDTH, HEIGHT, 0, 0);
+
+        for (unsigned int i = 0; i < tcount; i++)
+        {
+            threads[i] = std::thread ([=,&engine] // capture i by value, engine by reference, makes sense now
+            {
+                engine.render(i, WIDTH, HEIGHT/tcount, 0, HEIGHT/tcount * i);
+            }
+                                     );
+        }
+
+        for (int j = 0; j < tcount; j++)
+        {
+            threads[j].join(); // Wait for all threads to finish by joining them to the main thread
+        }
+
         display.render();
 
         // Handle input
@@ -128,6 +150,9 @@ int main(int argc, char** argv)
         // Increment frame counter
         frames++;
     }
+
+    // Free allocated memory
+    delete[] threads;
 
     // Quit SDL2 and the program after that
     SDL_Quit();

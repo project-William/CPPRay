@@ -5,14 +5,21 @@
 
 #include <string>
 #include <cmath>
+#include <random>
+#include <chrono>
+#include <thread>
 
 namespace math
 {
 
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<float>dis(0.0f, 1.0f);
+
 // Forward declaration(s) for functions that are in the 'math' namespace
 static float pseudorand(unsigned short xsubi[3])
 {
-    return static_cast<float>(rand()) /  static_cast<float>(RAND_MAX);
+    return dis(gen);
 }
 
 struct vec3

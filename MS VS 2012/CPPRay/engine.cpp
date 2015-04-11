@@ -4,18 +4,33 @@
 const vec3 Engine::COLOR_NULL = vec3();
 const vec3 Engine::COLOR_AMBI = vec3(0.1f, 0.1f, 0.1f);
 
-Engine::Engine(Display *display, Camera *camera)
+Engine::Engine(Display *display, Camera *camera, unsigned int threads)
 {
-    m_samples = new vec3[WIDTH * HEIGHT];
+    m_threads = threads;
+    m_sampler = new sampler[threads];
+
+    for (unsigned int i = 0; i < threads; i++)
+    {
+        m_sampler[i].samples = new vec3[WIDTH * HEIGHT];
+        m_sampler[i].samplesppx = 0;
+        std::cout << "Engine: Created a sampler #" << i << std::endl;
+    }
+
     clearSamples();
     m_scene = Scene();
     m_display = display;
     m_camera = camera;
+
+    std::cout << "Initialized a new Engine object succesfully." << std::endl;
 }
 
 Engine::~Engine()
 {
-    delete[] m_samples;
+    for (unsigned int i = 0; i < m_threads; i++)
+    {
+        delete[] m_sampler[i].samples;
+    }
+    delete[] m_sampler;
 
     std::cout << "Engine object has been destroyed succesfully." << std::endl;
 }
@@ -25,7 +40,7 @@ void Engine::update(float dt)
 
 }
 
-void Engine::render(int swidth, int sheight, int xoffset, int yoffset)
+void Engine::render(int thread, int swidth, int sheight, int xoffset, int yoffset)
 {
     int w = m_display->getWidth();
     int h = m_display->getHeight();
@@ -35,7 +50,7 @@ void Engine::render(int swidth, int sheight, int xoffset, int yoffset)
     quaternion q_inv = q.conjugate();
 
     // Increase samplecounter by one
-    m_samplesppx++;
+    m_sampler[thread].samplesppx++;
 
     for (int y = yoffset; y < yoffset + sheight; y++)
     {
@@ -77,7 +92,7 @@ void Engine::render(int swidth, int sheight, int xoffset, int yoffset)
                 radiance = pathtrace(r_primary, 0, Xi);
 
                 // Add the sample to the samples array
-                m_samples[x + y * WIDTH] += radiance / SUPERSAMPLINGLEVEL;
+                m_sampler[thread].samples[x + y * WIDTH] += radiance / SUPERSAMPLINGLEVEL;
             }
 #else
             // Create the ray's direction vector based on normalized screenspace coordinates
@@ -94,11 +109,9 @@ void Engine::render(int swidth, int sheight, int xoffset, int yoffset)
             radiance = pathtrace(r_primary, 0, Xi);
 
             // Add the sample to the samples array
-            m_samples[x + y * WIDTH] += radiance;
+            m_sampler[thread].samples[x + y * WIDTH] += radiance;
 #endif
-
-            vec3 c = m_samples[x + y * WIDTH] / static_cast<float>(m_samplesppx);
-            // Set the pixel color to the desired value
+            auto c = m_sampler[thread].samples[x + y * WIDTH] / static_cast<float>(m_sampler[thread].samplesppx);
             m_display->setPixel(x, y, c);
         }
     }
@@ -138,15 +151,17 @@ Intersection Engine::intersect(const Ray &r, float t)
 
 void Engine::clearSamples()
 {
-    for (unsigned int i = 0; i < WIDTH * HEIGHT; i++)
+    for (unsigned int i = 0; i < m_threads; i++)
     {
-        m_samples[i] = COLOR_NULL;
+        for (unsigned int j = 0; j < WIDTH * HEIGHT; j++)
+        {
+            m_sampler[i].samples[j] = COLOR_NULL;
+        }
+        m_sampler[i].samplesppx = 0;
     }
-
-    m_samplesppx = 0;
 }
 
 int Engine::getSamplesPPX()
 {
-    return m_samplesppx;
+    return m_sampler[0].samplesppx;
 }
