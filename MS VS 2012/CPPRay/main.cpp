@@ -16,8 +16,8 @@ int main(int argc, char** argv)
     // Boolean which is used to check if the program is running or not
     bool running = true;
 
-    // Initialize multithreading stuff
-#if THREADS>1
+    // Initialize multi-threading stuff
+#if THREADS>0
     const unsigned int tcount = THREADS;
 #else
     const unsigned int tcount = SDL_GetCPUCount();
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     Display display("C++Ray", WIDTH, HEIGHT, SCALE);
 
     // Initialize the main camera
-    Camera camera(vec3(0, 1, 0), quaternion().identity(), vec3(1), 2, 64);
+    Camera camera(Transform(vec3(0, 1, 0)), 2, 100);
 
     // Initialize the main engine object that handles the tracing
     Engine engine(&display, &camera, tcount);
@@ -58,13 +58,13 @@ int main(int argc, char** argv)
     {
         // Calculate delta-time & fps
         currentFrame = SDL_GetTicks();
-        deltaTime = 0.1f * deltaTime + 0.9f * (float) (currentFrame - lastFrame) / 1000;
+        deltaTime = 0.1f * deltaTime + 0.9f * static_cast<float>(currentFrame - lastFrame) / 1000;
         lastFrame = currentFrame;
         frameTime = 1.0f / deltaTime;
 
         // Display info in console every 100th sample
         if (engine.getSamplesPPX() % 100 == 0)
-            std::cout << "dt: " << deltaTime << "s" << " | FPS: " << frameTime << " | SPPX: " << engine.getSamplesPPX() << std::endl;
+            printf("dt: %.5f fps: %.5f sppx: %i \n", deltaTime, frameTime, engine.getSamplesPPX());
 
         // Calculate rendering of the scene
         engine.update(deltaTime);

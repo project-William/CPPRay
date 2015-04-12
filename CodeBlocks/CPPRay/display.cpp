@@ -13,7 +13,6 @@ Display::Display(const char *title, int width, int height, int scale)
     {
         std::cout << "Failed to initialize a display... Exiting the program with error code 1." << std::endl;
         delete[] m_pixels;
-        m_pixels = nullptr;
         std::exit(1);
     }
 
@@ -23,7 +22,6 @@ Display::Display(const char *title, int width, int height, int scale)
 Display::~Display()
 {
     delete[] m_pixels;
-    m_pixels = nullptr;
 
     SDL_DestroyTexture(m_texture);
     SDL_DestroyRenderer(m_renderer);

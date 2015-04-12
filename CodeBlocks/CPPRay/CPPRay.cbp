@@ -58,7 +58,6 @@
 			<Add option="-lmingw32 -lSDL2main -lSDL2" />
 			<Add directory="../SDL2-2.0.3/x86_64-w64-mingw32/lib" />
 		</Linker>
-		<Unit filename="camera.cpp" />
 		<Unit filename="camera.h" />
 		<Unit filename="config.h" />
 		<Unit filename="display.cpp" />

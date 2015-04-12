@@ -7,10 +7,10 @@ public:
 	Scene()
 	{
 		//// SCENE DATA BELOW
-		Material mat_l_w = Material(vec3(1, 1, 1), vec3(0), 1, DIFF);
+		Material mat_l_w = Material(vec3(3.33f, 3.33f, 3.33f), vec3(0), 1, DIFF);
 		Material mat_l_r = Material(vec3(8, 4, 4), vec3(0), 1, DIFF);
 		Material mat_l_g = Material(vec3(4, 8, 4), vec3(0), 1, DIFF);
-		Material mat_l_b = Material(vec3(8, 8, 24), vec3(0), 1, DIFF);
+		Material mat_l_b = Material(vec3(16, 16, 32), vec3(0), 1, DIFF);
 		Material mat_d_w = Material(vec3(), vec3(0.75f, 0.75f, 0.75f), 1, DIFF);
 		Material mat_d_r = Material(vec3(), vec3(0.75f, 0.25f, 0.25f), 1, DIFF);
 		Material mat_d_g = Material(vec3(), vec3(0.25f, 0.75f, 0.25f), 1, DIFF);
@@ -33,7 +33,7 @@ public:
 		m_spheres.push_back(Sphere(vec3(0.25f, 0.33f, -3), 0.25f, mat_g_p));
 		m_spheres.push_back(Sphere(vec3(-1.5f, 2.5f, -6), 0.5f, mat_g_c));
 		m_spheres.push_back(Sphere(vec3(1, 2, -6), 0.5f, mat_d_w));
-		m_spheres.push_back(Sphere(vec3(1.5f, 0.5f, -4), 0.5f, mat_l_b));
+		//m_spheres.push_back(Sphere(vec3(1.5f, 0.5f, -4), 0.5f, mat_l_b));
 
 		m_planes.push_back(Plane(vec3(0, 0, 0), vec3(0, 1, 0), mat_d_w));
 		m_planes.push_back(Plane(vec3(0, 4, 0), vec3(0, -1, 0), mat_l_w));

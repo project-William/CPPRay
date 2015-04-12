@@ -9,7 +9,7 @@ using namespace math;
 class Transform
 {
 public:
-    Transform(vec3 position = vec3(), quaternion rotation = quaternion().identity(), vec3 scale = vec3()) : m_position(position), m_rotation(rotation), m_scale(scale) { }
+    Transform(vec3 position = vec3(0, 0, 0), quaternion rotation = quaternion().identity(), vec3 scale = vec3(1, 1, 1)) : m_position(position), m_rotation(rotation), m_scale(scale) { }
 
     void setPosition(const vec3 v)
     {

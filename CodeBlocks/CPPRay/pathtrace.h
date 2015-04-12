@@ -64,7 +64,7 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
     {
         return f * pathtrace(Ray(P_vector, vec3::reflect(V_vector, N_vector)), n + 1, Xi);
     }
-    // Dielectric surfaces
+    // Dielectric surfaces, taken nearly directly from the smallpt powerpoint presentation, because it is so good and accurate.
     else if (M_info.getReflT() == REFR)
     {
         auto r_reflected = Ray(P_vector, vec3::reflect(V_vector, N_vector));
@@ -80,8 +80,8 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
         auto a = nt - nc, b = nt + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -ddn : vec3::dot(tdir, N_vector));
         auto Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P = 0.25f + 0.5f * Re, RP = Re / P, TP = Tr / (1.0f - P);
         return f * (n > 2 ? (math::pseudorand(Xi) < P ?
-                             pathtrace(r_reflected, n + 1, Xi) * RP : pathtrace(Ray(P_vector, tdir), n + 1, Xi) * TP) :
-                    pathtrace(r_reflected, n + 1, Xi) * Re + pathtrace(Ray(P_vector, tdir), n + 1, Xi) * Tr);
+            pathtrace(r_reflected, n + 1, Xi) * RP : pathtrace(Ray(P_vector, tdir), n + 1, Xi) * TP):
+            pathtrace(r_reflected, n + 1, Xi) * Re + pathtrace(Ray(P_vector, tdir), n + 1, Xi) * Tr);
     }
 
     return radiance;
