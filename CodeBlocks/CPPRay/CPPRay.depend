@@ -2,7 +2,7 @@
 1428509825 source:c:\users\harha\documents\code blocks projects\cppray\camera.cpp
 	"camera.h"
 
-1428842228 c:\users\harha\documents\code blocks projects\cppray\camera.h
+1428848893 c:\users\harha\documents\code blocks projects\cppray\camera.h
 	"vec3.h"
 	"quaternion.h"
 	"transform.h"
@@ -61,7 +61,7 @@
 	"intersection.h"
 	"scene.h"
 
-1428848450 c:\users\harha\documents\code blocks projects\cppray\config.h
+1428953348 c:\users\harha\documents\code blocks projects\cppray\config.h
 
 1428520635 c:\users\harha\documents\code blocks projects\cppray\sphere.h
 	"vec3.h"
@@ -77,7 +77,7 @@
 	"vec3.h"
 	"material.h"
 
-1428421769 c:\users\harha\documents\code blocks projects\cppray\material.h
+1428951313 c:\users\harha\documents\code blocks projects\cppray\material.h
 	"vec3.h"
 
 1428520689 c:\users\harha\documents\code blocks projects\cppray\plane.h
@@ -87,14 +87,14 @@
 	"material.h"
 	"math.h"
 
-1428848608 c:\users\harha\documents\code blocks projects\cppray\scene.h
+1428953326 c:\users\harha\documents\code blocks projects\cppray\scene.h
 
-1428843445 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
+1428952333 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
 
 1428515841 source:c:\users\harha\documents\code blocks projects\cppray\intersection.cpp
 	"intersection.h"
 
-1428847833 source:c:\users\harha\documents\code blocks projects\cppray\main.cpp
+1428873396 source:c:\users\harha\documents\code blocks projects\cppray\main.cpp
 	<iostream>
 	<thread>
 	"SDL.h"

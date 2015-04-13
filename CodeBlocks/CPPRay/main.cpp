@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     Display display("C++Ray", WIDTH, HEIGHT, SCALE);
 
     // Initialize the main camera
-    Camera camera(Transform(vec3(0, 1, 0)), 2, 100);
+    Camera camera(Transform(vec3(0, 2, 0)), 2, 100);
 
     // Initialize the main engine object that handles the tracing
     Engine engine(&display, &camera, tcount);

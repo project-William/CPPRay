@@ -20,7 +20,7 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
         return xFinal.getMaterial().getEmittance();
     }
 
-    // Take intersection info & ray info and assign it to references with short names
+    // Assign intersection data into shorter variable names for easier use
     auto V_vector = r.getDirection();
     auto P_vector = xFinal.getPosition();
     auto N_vector = xFinal.getNormal();
@@ -42,18 +42,69 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
 
         // Prepare all required information
         auto L_vector = L_rand.negate();
-        //auto H_vector = (V_vector + L_vector).normalize();
 
         // Calculate all dot products
         auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
-        //auto NdotV = std::abs(vec3::dot(N_vector, V_vector)); <-- These are needed later for glossy specular BRDF surfaces
-        //auto NdotH = std::abs(vec3::dot(N_vector, H_vector));
-        //auto VdotH = std::abs(vec3::dot(V_vector, H_vector));
 
         // Calculate the bidirectional reflectance function value
         auto BRDF = 2.0f * NdotL * PI_1;
 
-        // Calculate the contributed reflected light amount
+        // Get the reflected light amount from L_rand
+        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1, Xi);
+
+        // Return the final radiance
+        return f * BRDF * REFL;
+    }
+    // Glossy specular surfaces (Cook-torrance microfacet brdf model)
+    else if (M_info.getReflT() == GLOS)
+    {
+        // Get the random hemisphere and mirror reflection directions
+        auto L_mirr = vec3::reflect(V_vector, N_vector).normalize();
+        auto L_rand = vec3::sampleHemisphere(L_mirr, Xi); // Normal plane is perpendicular to the mirror reflection
+
+        // Check if the reflected ray aims through the surface, if true reflect against the normal plane
+        if (vec3::dot(N_vector, L_rand) < 0.0f)
+            L_rand = vec3::reflect(L_rand, L_mirr).normalize();
+
+        // Temp surface values
+        float R = M_info.getRoughness();
+        float RR = R * R;
+        float F = M_info.getFresnel();
+        float K = M_info.getDensity();
+
+        // Prepare all required information
+        auto L_vector = L_rand.negate();
+        auto H_vector = (V_vector + L_vector).normalize();
+
+        // Calculate all dot products
+        auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
+        auto NdotV = std::abs(vec3::dot(N_vector, V_vector));
+        auto NdotH = std::abs(vec3::dot(N_vector, H_vector));
+        auto VdotH = std::abs(vec3::dot(V_vector, H_vector));
+
+        // Evaluate the geometric term
+        float geo_numer = 2.0f * NdotH;
+        float geo_denom = VdotH;
+        float geo = std::min(1.0f, std::min((geo_numer * NdotV) / geo_denom, (geo_numer * NdotL) / geo_denom));
+
+        // Evaluate the roughness term
+        float rough_a = 1.0f / (4.0f * RR * std::pow(NdotH, 4.0f));
+        float rough_b = NdotH * NdotH - 1.0f;
+        float rough_c = RR * NdotH * NdotH;
+        float rough = rough_a * std::exp(rough_b / rough_c);
+
+        // Evaluate the fresnel term
+        float fresnel = std::pow(1.0f - VdotH, 5.0f);
+        fresnel *= 1.0f - F;
+        fresnel += F;
+
+        // Put the terms together
+        float Rs = geo * rough * fresnel / (NdotV * NdotL + EPSILON);
+
+        // Calculate the cook-torrance brdf value
+        auto BRDF = (2.0f * NdotL * (Rs * (1.0f - K) + K)) * PI_1;
+
+        // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1, Xi);
 
         // Return the final radiance
@@ -80,8 +131,8 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
         auto a = nt - nc, b = nt + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -ddn : vec3::dot(tdir, N_vector));
         auto Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P = 0.25f + 0.5f * Re, RP = Re / P, TP = Tr / (1.0f - P);
         return f * (n > 2 ? (math::pseudorand(Xi) < P ?
-            pathtrace(r_reflected, n + 1, Xi) * RP : pathtrace(Ray(P_vector, tdir), n + 1, Xi) * TP):
-            pathtrace(r_reflected, n + 1, Xi) * Re + pathtrace(Ray(P_vector, tdir), n + 1, Xi) * Tr);
+                             pathtrace(r_reflected, n + 1, Xi) * RP : pathtrace(Ray(P_vector, tdir), n + 1, Xi) * TP):
+                    pathtrace(r_reflected, n + 1, Xi) * Re + pathtrace(Ray(P_vector, tdir), n + 1, Xi) * Tr);
     }
 
     return radiance;
