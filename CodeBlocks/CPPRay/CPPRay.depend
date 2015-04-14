@@ -7,7 +7,7 @@
 	"quaternion.h"
 	"transform.h"
 
-1428773982 c:\users\harha\documents\code blocks projects\cppray\vec3.h
+1429009573 c:\users\harha\documents\code blocks projects\cppray\vec3.h
 	<string>
 	<cmath>
 	<random>
@@ -30,9 +30,10 @@
 1428843486 source:c:\users\harha\documents\code blocks projects\cppray\display.cpp
 	"display.h"
 
-1428699480 c:\users\harha\documents\code blocks projects\cppray\display.h
+1429009396 c:\users\harha\documents\code blocks projects\cppray\display.h
 	<iostream>
 	"SDL.h"
+	"config.h"
 	"math.h"
 	"vec3.h"
 
@@ -42,11 +43,12 @@
 	<algorithm>
 	"vec3.h"
 
-1428773639 source:c:\users\harha\documents\code blocks projects\cppray\engine.cpp
+1429013082 source:c:\users\harha\documents\code blocks projects\cppray\engine.cpp
 	"engine.h"
 	"pathtrace.h"
 
-1428773816 c:\users\harha\documents\code blocks projects\cppray\engine.h
+1429011456 c:\users\harha\documents\code blocks projects\cppray\engine.h
+	<array>
 	<vector>
 	<memory>
 	<iostream>
@@ -58,12 +60,13 @@
 	"quaternion.h"
 	"sphere.h"
 	"plane.h"
+	"triangle.h"
 	"intersection.h"
 	"scene.h"
 
-1428953348 c:\users\harha\documents\code blocks projects\cppray\config.h
+1429025928 c:\users\harha\documents\code blocks projects\cppray\config.h
 
-1428520635 c:\users\harha\documents\code blocks projects\cppray\sphere.h
+1428960522 c:\users\harha\documents\code blocks projects\cppray\sphere.h
 	"vec3.h"
 	"ray.h"
 	"intersection.h"
@@ -77,7 +80,7 @@
 	"vec3.h"
 	"material.h"
 
-1428951313 c:\users\harha\documents\code blocks projects\cppray\material.h
+1428953729 c:\users\harha\documents\code blocks projects\cppray\material.h
 	"vec3.h"
 
 1428520689 c:\users\harha\documents\code blocks projects\cppray\plane.h
@@ -87,14 +90,14 @@
 	"material.h"
 	"math.h"
 
-1428953326 c:\users\harha\documents\code blocks projects\cppray\scene.h
+1429025198 c:\users\harha\documents\code blocks projects\cppray\scene.h
 
-1428952333 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
+1429009540 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
 
 1428515841 source:c:\users\harha\documents\code blocks projects\cppray\intersection.cpp
 	"intersection.h"
 
-1428873396 source:c:\users\harha\documents\code blocks projects\cppray\main.cpp
+1429025761 source:c:\users\harha\documents\code blocks projects\cppray\main.cpp
 	<iostream>
 	<thread>
 	"SDL.h"
@@ -444,4 +447,11 @@
 1428702016 c:\users\harha\documents\code blocks projects\cppray\mersennetwister.h
 	<ctime>
 	<stdint.h>
+
+1429012910 c:\users\harha\documents\code blocks projects\cppray\triangle.h
+	"vec3.h"
+	"ray.h"
+	"intersection.h"
+	"material.h"
+	"math.h"
 

@@ -54,18 +54,14 @@ void Engine::render(int thread, int swidth, int sheight, int xoffset, int yoffse
 
     for (int y = yoffset; y < yoffset + sheight; y++)
     {
-
-        // Generate seed for RNG each row
-        unsigned short Xi[3] = {0, 0, y * y * y};
-
         for (int x = xoffset; x < xoffset + swidth; x++)
         {
             // Pixel's color value
             vec3 radiance = vec3(0, 0, 0);
 
             // Tent filter for each ray's xy directions
-            float r1 = 2.0f * math::pseudorand(Xi), dx = r1 < 1.0f ? std::sqrt(r1) - 1.0f : 1.0f - std::sqrt(2.0f - r1);
-            float r2 = 2.0f * math::pseudorand(Xi), dy = r2 < 1.0f ? std::sqrt(r2) - 1.0f : 1.0f - std::sqrt(2.0f - r2);
+            float r1 = 2.0f * math::pseudorand(), dx = r1 < 1.0f ? std::sqrt(r1) - 1.0f : 1.0f - std::sqrt(2.0f - r1);
+            float r2 = 2.0f * math::pseudorand(), dy = r2 < 1.0f ? std::sqrt(r2) - 1.0f : 1.0f - std::sqrt(2.0f - r2);
 
             // Construct the ray's direction vector and aim it towards the virtual screen's pixel
             float x_norm = (x + dx - w * 0.5f) / w * ar;
@@ -75,8 +71,8 @@ void Engine::render(int thread, int swidth, int sheight, int xoffset, int yoffse
             for (unsigned int i = 0; i < SUPERSAMPLINGLEVEL; i++)
             {
                 // Random jitter per ray for supersampling
-                float x_rng = 2 * math::pseudorand(Xi) - 1;
-                float y_rng = 2 * math::pseudorand(Xi) - 1;
+                float x_rng = 2 * math::pseudorand() - 1;
+                float y_rng = 2 * math::pseudorand() - 1;
 
                 // Apply the jitter to the ray dir
                 vec3 v_norm = vec3(x_norm + SUPERSAMPLINGJITTER * x_rng, y_norm + SUPERSAMPLINGJITTER * y_rng, -1.0f);
@@ -89,7 +85,7 @@ void Engine::render(int thread, int swidth, int sheight, int xoffset, int yoffse
                 r_primary.setDirection(vec3(r.x, r.y, r.z));
 
                 // Pathtrace
-                radiance = pathtrace(r_primary, 0, Xi);
+                radiance = pathtrace(r_primary, 0);
 
                 // Add the sample to the samples array
                 m_sampler[thread].samples[x + y * WIDTH] += radiance / SUPERSAMPLINGLEVEL;
@@ -106,7 +102,7 @@ void Engine::render(int thread, int swidth, int sheight, int xoffset, int yoffse
             r_primary.setDirection(vec3(r.x, r.y, r.z));
 
             // Pathtrace
-            radiance = pathtrace(r_primary, 0, Xi);
+            radiance = pathtrace(r_primary, 0);
 
             // Add the sample to the samples array
             m_sampler[thread].samples[x + y * WIDTH] += radiance;
@@ -138,6 +134,18 @@ Intersection Engine::intersect(const Ray &r, float t)
     for (auto &p : m_scene.getScenePlanes())
     {
         xInit = p.intersect(r);
+
+        if (xInit != invalidIntersection && xInit.getT() < t)
+        {
+            xFinal = xInit;
+            t = xFinal.getT();
+        }
+    }
+
+    // Find the nearest intersection against a triangle if there's any
+    for (auto &tr : m_scene.getSceneTriangles())
+    {
+        xInit = tr.intersect(r);
 
         if (xInit != invalidIntersection && xInit.getT() < t)
         {

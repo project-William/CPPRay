@@ -1,4 +1,4 @@
-vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
+vec3 Engine::pathtrace(const Ray &r, int n)
 {
     // Immediately return vec3(0) if recursion limit was hit
     if (n > RECURSION_MAX)
@@ -31,14 +31,14 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
     // Russian roulette, use maximum reflectance amount
     auto p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;
     if (n > RECURSION_MAX/2 || !p)
-        if (math::pseudorand(Xi) < p)
+        if (math::pseudorand() < p)
             f *= (1.0f / p);
 
     // Diffuse surfaces
     if (M_info.getReflT() == DIFF)
     {
         // Calculate the light direction ray
-        auto L_rand = vec3::sampleHemisphere(N_vector, Xi);
+        auto L_rand = vec3::sampleHemisphere(N_vector);
 
         // Prepare all required information
         auto L_vector = L_rand.negate();
@@ -50,17 +50,18 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
         auto BRDF = 2.0f * NdotL * PI_1;
 
         // Get the reflected light amount from L_rand
-        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1, Xi);
+        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
         return f * BRDF * REFL;
     }
     // Glossy specular surfaces (Cook-torrance microfacet brdf model)
+    // TODO: Fix fireflies caused by really low roughness values
     else if (M_info.getReflT() == GLOS)
     {
         // Get the random hemisphere and mirror reflection directions
         auto L_mirr = vec3::reflect(V_vector, N_vector).normalize();
-        auto L_rand = vec3::sampleHemisphere(L_mirr, Xi); // Normal plane is perpendicular to the mirror reflection
+        auto L_rand = vec3::sampleHemisphere(L_mirr); // Normal plane is perpendicular to the mirror reflection
 
         // Check if the reflected ray aims through the surface, if true reflect against the normal plane
         if (vec3::dot(N_vector, L_rand) < 0.0f)
@@ -105,7 +106,7 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
         auto BRDF = (2.0f * NdotL * (Rs * (1.0f - K) + K)) * PI_1;
 
         // Get the reflected light amount from L_rand
-        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1, Xi);
+        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
         return f * BRDF * REFL;
@@ -113,7 +114,7 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
     // Mirror surfaces
     else if (M_info.getReflT() == SPEC)
     {
-        return f * pathtrace(Ray(P_vector, vec3::reflect(V_vector, N_vector)), n + 1, Xi);
+        return f * pathtrace(Ray(P_vector, vec3::reflect(V_vector, N_vector)), n + 1);
     }
     // Dielectric surfaces, taken nearly directly from the smallpt powerpoint presentation, because it is so good and accurate.
     else if (M_info.getReflT() == REFR)
@@ -124,15 +125,15 @@ vec3 Engine::pathtrace(const Ray &r, int n, unsigned short *Xi)
 
         // If total internal reflection, reflect
         if ((cos2t = 1.0f - nnt * nnt * (1.0f - ddn * ddn)) < 0.0f)
-            return f * pathtrace(r_reflected, n + 1, Xi);
+            return f * pathtrace(r_reflected, n + 1);
 
         // Otherwise, choose reflection or refraction
         auto tdir = (V_vector * nnt - N_vector * ((into ? 1.0f : -1.0f) * (ddn * nnt + std::sqrt(cos2t)))).normalize();
         auto a = nt - nc, b = nt + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -ddn : vec3::dot(tdir, N_vector));
         auto Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P = 0.25f + 0.5f * Re, RP = Re / P, TP = Tr / (1.0f - P);
-        return f * (n > 2 ? (math::pseudorand(Xi) < P ?
-                             pathtrace(r_reflected, n + 1, Xi) * RP : pathtrace(Ray(P_vector, tdir), n + 1, Xi) * TP):
-                    pathtrace(r_reflected, n + 1, Xi) * Re + pathtrace(Ray(P_vector, tdir), n + 1, Xi) * Tr);
+        return f * (n > 2 ? (math::pseudorand() < P ?
+                             pathtrace(r_reflected, n + 1) * RP : pathtrace(Ray(P_vector, tdir), n + 1) * TP):
+                    pathtrace(r_reflected, n + 1) * Re + pathtrace(Ray(P_vector, tdir), n + 1) * Tr);
     }
 
     return radiance;

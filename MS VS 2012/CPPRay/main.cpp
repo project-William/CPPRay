@@ -64,7 +64,7 @@ int main(int argc, char** argv)
 
         // Display info in console every 100th sample
         if (engine.getSamplesPPX() % 100 == 0)
-            printf("dt: %.5f fps: %.5f sppx: %i \n", deltaTime, frameTime, engine.getSamplesPPX());
+            printf("dt: %.5f fps: %.5f sppx: %i\nrays cast per second: %.5f\n", deltaTime, frameTime, engine.getSamplesPPX(), WIDTH * HEIGHT * frameTime);
 
         // Calculate rendering of the scene
         engine.update(deltaTime);
@@ -72,16 +72,15 @@ int main(int argc, char** argv)
 
         for (unsigned int i = 0; i < tcount; i++)
         {
-            threads[i] = std::thread ([=,&engine] // capture i by value, engine by reference, makes sense now
+            threads[i] = std::thread ([=,&engine]
             {
                 engine.render(i, WIDTH, HEIGHT/tcount, 0, HEIGHT/tcount * i);
-            }
-                                     );
+            });
         }
 
-        for (int j = 0; j < tcount; j++)
+        for (unsigned int i = 0; i < tcount; i++)
         {
-            threads[j].join(); // Wait for all threads to finish by joining them to the main thread
+            threads[i].join();
         }
 
         display.render();

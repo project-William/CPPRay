@@ -76,6 +76,7 @@
 		<Unit filename="scene.h" />
 		<Unit filename="sphere.h" />
 		<Unit filename="transform.h" />
+		<Unit filename="triangle.h" />
 		<Unit filename="vec3.h" />
 		<Extensions>
 			<code_completion />

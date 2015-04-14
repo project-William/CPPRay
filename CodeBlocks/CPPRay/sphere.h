@@ -38,6 +38,16 @@ public:
 
         return x;
     }
+
+    vec3 getPosition() const
+    {
+        return m_position;
+    }
+
+    Material getMaterial() const
+    {
+        return m_material;
+    }
 private:
     vec3 m_position;
     float m_radius;

@@ -15,7 +15,7 @@ static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<float>dis(0.0f, 1.0f);
 
-static float pseudorand(unsigned short xsubi[3])
+static float pseudorand()
 {
     return dis(gen);
 }
@@ -176,19 +176,19 @@ struct vec3
         return I - (N * dot(N, I) * 2.0f);
     }
 
-    static vec3 sampleSphere(unsigned short *Xi)
+    static vec3 sampleSphere()
     {
-        float x = std::cos(2.0f * PI * pseudorand(Xi));
-        float y = std::sin(2.0f * PI * pseudorand(Xi));
-        float z = std::sin(2.0f * PI * pseudorand(Xi));
+        float x = std::cos(2.0f * PI * pseudorand());
+        float y = std::sin(2.0f * PI * pseudorand());
+        float z = std::sin(2.0f * PI * pseudorand());
 
         return vec3(x, y, z).normalize();
     }
 
-    static vec3 sampleHemisphere(const vec3 &N, unsigned short *Xi)
+    static vec3 sampleHemisphere(const vec3 &N)
     {
-        float r1 = 2.0f * PI * pseudorand(Xi);
-        float r2 = pseudorand(Xi), r2s = std::sqrt(r2);
+        float r1 = 2.0f * PI * pseudorand();
+        float r2 = pseudorand(), r2s = std::sqrt(r2);
         vec3 w = N; // w = normal
         vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
         vec3 v = cross(w, u); // v is perpendicular to u and w
