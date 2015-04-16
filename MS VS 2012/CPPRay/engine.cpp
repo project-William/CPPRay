@@ -17,7 +17,7 @@ Engine::Engine(Display *display, Camera *camera, unsigned int threads)
     }
 
     clearSamples();
-    m_scene = Scene();
+    m_scene = Scene(2);
     m_display = display;
     m_camera = camera;
 

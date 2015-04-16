@@ -164,6 +164,8 @@
     <ClCompile Include="display.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -172,6 +174,7 @@
     <ClInclude Include="intersection.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="math.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="pathtrace.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="ray.h" />

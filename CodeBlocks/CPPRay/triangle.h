@@ -2,6 +2,7 @@
 #define TRIANGLE_H
 
 #include "vec3.h"
+#include "quaternion.h"
 #include "ray.h"
 #include "intersection.h"
 #include "material.h"
@@ -29,7 +30,7 @@ public:
         P = vec3::cross(r.getDirection(), edge_b);
         d = vec3::dot(edge_a, P);
 
-        if (d > -EPSILON && d < EPSILON)
+        if (d < EPSILON)
             return invalidIntersection;
 
         inv_d = 1.0f / d;
@@ -62,6 +63,39 @@ public:
     void calcNormal()
     {
         m_normal = vec3::cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize();
+    }
+
+    /*
+        These functions below need to be deleted
+        and these cases need to be handled with the Transform class somehow.
+    */
+    void translate(vec3 v)
+    {
+        m_vertices[0] += v;
+        m_vertices[1] += v;
+        m_vertices[2] += v;
+        calcNormal();
+    }
+
+    void rotate(quaternion q)
+    {
+        m_vertices[0] = m_vertices[0] * q;
+        m_vertices[1] = m_vertices[1] * q;
+        m_vertices[2] = m_vertices[2] * q;
+        calcNormal();
+    }
+
+    void scale(vec3 v)
+    {
+        m_vertices[0] *= v;
+        m_vertices[1] *= v;
+        m_vertices[2] *= v;
+        calcNormal();
+    }
+
+    std::string toString() const
+    {
+        return "Triangle[\n" + m_vertices[0].toString() + "\n" + m_vertices[1].toString() + "\n" + m_vertices[2].toString();
     }
 
     Material getMaterial() const

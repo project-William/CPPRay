@@ -5,7 +5,7 @@ a Minimalistic pathtracer written in C++, inspiration taken from projects like s
 
 ![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/cppray1.png)
 
-1280x720 Render @ 1500SPPX, image not entirely accurate since it's old and things have changed.
+512x512 render @ 1000SPPX, .obj meshes
 
 ![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/glossy1.png)
 

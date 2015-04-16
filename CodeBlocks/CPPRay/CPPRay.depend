@@ -43,11 +43,11 @@
 	<algorithm>
 	"vec3.h"
 
-1429013082 source:c:\users\harha\documents\code blocks projects\cppray\engine.cpp
+1429196305 source:c:\users\harha\documents\code blocks projects\cppray\engine.cpp
 	"engine.h"
 	"pathtrace.h"
 
-1429011456 c:\users\harha\documents\code blocks projects\cppray\engine.h
+1429194485 c:\users\harha\documents\code blocks projects\cppray\engine.h
 	<array>
 	<vector>
 	<memory>
@@ -64,7 +64,7 @@
 	"intersection.h"
 	"scene.h"
 
-1429025928 c:\users\harha\documents\code blocks projects\cppray\config.h
+1429207120 c:\users\harha\documents\code blocks projects\cppray\config.h
 
 1428960522 c:\users\harha\documents\code blocks projects\cppray\sphere.h
 	"vec3.h"
@@ -80,7 +80,7 @@
 	"vec3.h"
 	"material.h"
 
-1428953729 c:\users\harha\documents\code blocks projects\cppray\material.h
+1429195568 c:\users\harha\documents\code blocks projects\cppray\material.h
 	"vec3.h"
 
 1428520689 c:\users\harha\documents\code blocks projects\cppray\plane.h
@@ -90,9 +90,14 @@
 	"material.h"
 	"math.h"
 
-1429025198 c:\users\harha\documents\code blocks projects\cppray\scene.h
+1429196340 c:\users\harha\documents\code blocks projects\cppray\scene.h
+	<vector>
+	"sphere.h"
+	"plane.h"
+	"triangle.h"
+	"mesh.h"
 
-1429009540 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
+1429028290 c:\users\harha\documents\code blocks projects\cppray\pathtrace.h
 
 1428515841 source:c:\users\harha\documents\code blocks projects\cppray\intersection.cpp
 	"intersection.h"
@@ -448,10 +453,57 @@
 	<ctime>
 	<stdint.h>
 
-1429012910 c:\users\harha\documents\code blocks projects\cppray\triangle.h
+1429199364 c:\users\harha\documents\code blocks projects\cppray\triangle.h
 	"vec3.h"
+	"quaternion.h"
 	"ray.h"
 	"intersection.h"
 	"material.h"
 	"math.h"
+
+1429207363 c:\users\harha\documents\code blocks projects\cppray\mesh.h
+	<iostream>
+	<fstream>
+	<sstream>
+	<algorithm>
+	<vector>
+	"assert.h"
+	"vec3.h"
+	"quaternion.h"
+	"transform.h"
+	"triangle.h"
+
+1429123835 c:\users\harha\documents\code blocks projects\cppray\tiny_obj_loader.h
+	<string>
+	<vector>
+	<map>
+
+1429123857 source:c:\users\harha\documents\code blocks projects\cppray\tiny_obj_loader.cpp
+	<cstdlib>
+	<cstring>
+	<cassert>
+	<cmath>
+	<string>
+	<vector>
+	<map>
+	<fstream>
+	<sstream>
+	"tiny_obj_loader.h"
+
+1429194174 c:\users\harha\documents\code blocks projects\cppray\objmesh.h
+	<iostream>
+	<fstream>
+	<sstream>
+	<algorithm>
+	<vector>
+	"vec3.h"
+
+1429194450 source:c:\users\harha\documents\code blocks projects\cppray\objmesh.cpp
+	"objmesh.h"
+
+1429199498 source:c:\users\harha\documents\code blocks projects\cppray\scene.cpp
+	"scene.h"
+
+1429196171 source:c:\users\harha\documents\code blocks projects\cppray\mesh.cpp
+	"mesh.h"
 

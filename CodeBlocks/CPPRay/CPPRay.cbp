@@ -69,10 +69,13 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="material.h" />
 		<Unit filename="math.h" />
+		<Unit filename="mesh.cpp" />
+		<Unit filename="mesh.h" />
 		<Unit filename="pathtrace.h" />
 		<Unit filename="plane.h" />
 		<Unit filename="quaternion.h" />
 		<Unit filename="ray.h" />
+		<Unit filename="scene.cpp" />
 		<Unit filename="scene.h" />
 		<Unit filename="sphere.h" />
 		<Unit filename="transform.h" />
