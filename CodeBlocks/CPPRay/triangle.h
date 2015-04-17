@@ -17,6 +17,18 @@ public:
         m_vertices[1] = v1;
         m_vertices[2] = v2;
         calcNormal();
+        iNormals = false;
+    }
+
+    Triangle(vec3 v0 = vec3(), vec3 v1 = vec3(), vec3 v2 = vec3(), vec3 n0 = vec3(), vec3 n1 = vec3(), vec3 n2 = vec3(), Material material = Material()) : m_material(material)
+    {
+        m_vertices[0] = v0;
+        m_vertices[1] = v1;
+        m_vertices[2] = v2;
+        m_normals[0] = n0;
+        m_normals[1] = n1;
+        m_normals[2] = n2;
+        iNormals = true;
     }
 
     Intersection intersect(const Ray &r) const
@@ -53,7 +65,7 @@ public:
 
         auto x = Intersection();
         x.setPosition(r.getOrigin() + r.getDirection() * t);
-        x.setNormal(m_normal);
+        x.setNormal(m_normals[0]);
         x.setT(t);
         x.setMaterial(m_material);
 
@@ -62,19 +74,14 @@ public:
 
     void calcNormal()
     {
-        m_normal = vec3::cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize();
+        m_normals[0] = vec3::cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize();
     }
 
-    /*
-        These functions below need to be deleted
-        and these cases need to be handled with the Transform class somehow.
-    */
     void translate(vec3 v)
     {
         m_vertices[0] += v;
         m_vertices[1] += v;
         m_vertices[2] += v;
-        calcNormal();
     }
 
     void rotate(quaternion q)
@@ -82,7 +89,6 @@ public:
         m_vertices[0] = m_vertices[0] * q;
         m_vertices[1] = m_vertices[1] * q;
         m_vertices[2] = m_vertices[2] * q;
-        calcNormal();
     }
 
     void scale(vec3 v)
@@ -90,7 +96,6 @@ public:
         m_vertices[0] *= v;
         m_vertices[1] *= v;
         m_vertices[2] *= v;
-        calcNormal();
     }
 
     std::string toString() const
@@ -104,8 +109,9 @@ public:
     }
 private:
     vec3 m_vertices[3];
-    vec3 m_normal;
+    vec3 m_normals[3];
     Material m_material;
+    bool iNormals;
 protected:
 };
 

@@ -7,11 +7,11 @@ Mesh::Mesh(char *fileName, Material material)
 
     if (loadObj() != 0)
     {
-        std::cerr << "ObjMesh: Error loading " << m_fileName << std::endl;
+        std::cerr << "Mesh: Error loading " << m_fileName << std::endl;
         std::exit(1);
     }
 
-    std::cout << "ObjMesh: " << m_fileName << " has been loaded succesfully." << std::endl;
+    std::cout << "Mesh: " << m_fileName << " has been loaded succesfully." << std::endl;
 }
 
 int Mesh::loadObj()
@@ -40,17 +40,48 @@ int Mesh::loadObj()
                 s >> v.z;
                 vertices.push_back(v);
             }
-            else if (line.substr(0, 2) == "f ")
+            else if (line.substr(0, 2) == "vn ")
             {
                 std::istringstream s(line.substr(2));
-                face f;
-                s >> f.a;
-                s >> f.b;
-                s >> f.c;
-                f.a--;
-                f.b--;
-                f.c--;
-                indices.push_back(f);
+                vec3 n;
+                s >> n.x;
+                s >> n.y;
+                s >> n.z;
+                normals.push_back(n);
+            }
+            else if (line.substr(0, 2) == "f ")
+            {
+                if (line.find("//") == std::string::npos)
+                {
+                    std::istringstream s(line.substr(2));
+                    face f;
+                    s >> f.va;
+                    s >> f.vb;
+                    s >> f.vc;
+                    f.va--;
+                    f.vb--;
+                    f.vc--;
+                    indices.push_back(f);
+                }
+                else
+                {
+                    std::replace(line.begin(), line.end(), '/', ' ');
+                    std::istringstream s(line.substr(2));
+                    face f;
+                    s >> f.va;
+                    s >> f.na;
+                    s >> f.vb;
+                    s >> f.nb;
+                    s >> f.vc;
+                    s >> f.nc;
+                    f.va--;
+                    f.na--;
+                    f.vb--;
+                    f.nb--;
+                    f.vc--;
+                    f.nc--;
+                    indices.push_back(f);
+                }
             }
             else
             {
@@ -63,15 +94,22 @@ int Mesh::loadObj()
         return 1;
     }
 
-    assert((indices.size() % 3) == 0);
-
     for (size_t i = 0; i < indices.size(); i++)
     {
-        vec3 v0 = vertices[indices[i].a];
-        vec3 v1 = vertices[indices[i].b];
-        vec3 v2 = vertices[indices[i].c];
-
-        m_triangles.push_back(Triangle(v0, v1, v2, m_material));
+        vec3 v0 = vertices[indices[i].va];
+        vec3 v1 = vertices[indices[i].vb];
+        vec3 v2 = vertices[indices[i].vc];
+        if (normals.size() > 0)
+        {
+            vec3 n0 = normals[indices[i].na];
+            vec3 n1 = normals[indices[i].nb];
+            vec3 n2 = normals[indices[i].nc];
+            m_triangles.push_back(Triangle(v0, v1, v2, n0, n1, n2, m_material));
+        }
+        else
+        {
+            m_triangles.push_back(Triangle(v0, v1, v2, m_material));
+        }
     }
 
     return 0;

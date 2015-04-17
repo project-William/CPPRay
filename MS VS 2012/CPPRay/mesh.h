@@ -16,7 +16,8 @@ using namespace math;
 
 struct face
 {
-    int a, b, c;
+    int va, vb, vc;
+    int na, nb, nc;
 };
 
 class Mesh
