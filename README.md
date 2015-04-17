@@ -1,16 +1,10 @@
 CPPRay
 ====
 
-a Minimalistic pathtracer written in C++, inspiration taken from projects like smallpt.
+A Minimalistic pathtracer written in C++, inspiration taken from projects like smallpt.
 
-![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/cppray1.png)
+![512x512 render @ 1000SPPX, .obj meshes](images/cppray.png)
 
-512x512 render @ 1000SPPX, .obj meshes
+![512x512 render @ 200SPPX, Cook-torrance microfacet brdf model for glossy specular materials](images/glossy1.png)
 
-![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/glossy1.png)
-
-512x512 render @ 200SPPX, Cook-torrance microfacet brdf model for glossy specular materials
-
-![alt tag](https://raw.githubusercontent.com/Harha/CPPRay/master/glossy2.png)
-
-512x512 render @ 1000SPPX, Glossy floor, triangles implemented
+![512x512 render @ 1000SPPX, Glossy floor, triangles implemented](images/glossy2.png)
