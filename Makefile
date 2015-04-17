@@ -1,6 +1,6 @@
 CXXFLAGS = -std=c++11 -Wall -Wextra
 LDFLAGS = -Wl,--as-needed
-LDLIBS = -lSDL2 -lm
+LDLIBS = -lSDL2
 
 OBJECTS = main.o display.o engine.o mesh.o scene.o
 
