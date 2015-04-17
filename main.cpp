@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "config.h"
 #include "display.h"
 #include "engine.h"

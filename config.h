@@ -1,10 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define WIDTH 128
-#define HEIGHT 128
-#define SCALE 4
-#define THREADS 0
+#define WIDTH 512
+#define HEIGHT 512
+#define SCALE 1
+#define THREADS 4
 #define GAMMA 2.25f
 #define RECURSION_MAX 5
 #define MAXDISTANCE 128
