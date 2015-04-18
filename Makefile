@@ -1,17 +1,34 @@
-CXXFLAGS = -std=c++11 -Wall -Wextra
-LDFLAGS = -Wl,--as-needed
-LDLIBS = -lSDL2
+# CPPRay default Makefile for building CPPRay on GNU GCC or Mingw32
+# Original creator: EliteTK
+# Edits by: Harha
 
-OBJECTS = main.o display.o engine.o mesh.o scene.o
-
+# Binary name
 BINARY = CPPRay
 
+# Use mingw32 by default on windows
+ifeq ($(OS), Windows_NT)
+	LDLIBS = -lmingw32
+endif
+
+# Compiler flags
+CXXFLAGS = -std=c++11 -Wall -Wextra
+
+# Linker flags
+LDFLAGS = -Wl,--as-needed
+
+# Linker libraries
+LDLIBS += -lSDL2main -lSDL2
+
+# Object files to be created
+OBJECTS = main.o display.o engine.o mesh.o scene.o
+
+# Disable optimizations if DEBUG is true
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CXXFLAGS += -Og -g
 else
-	CXXFLAGS += -flto -O2
-	LDFLAGS += -flto -O2
+	CXXFLAGS += -Ofast -O3
+	LDFLAGS += -Ofast -O3
 endif
 
 all: $(BINARY)
