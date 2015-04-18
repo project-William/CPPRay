@@ -27,8 +27,8 @@ DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CXXFLAGS += -Og -g
 else
-	CXXFLAGS += -Ofast -O3
-	LDFLAGS += -Ofast -O3
+	CXXFLAGS += -Ofast
+	LDFLAGS += -Ofast
 endif
 
 all: $(BINARY)
@@ -50,3 +50,5 @@ TAGS:
 
 clean:
 	$(RM) $(OBJECTS) $(BINARY) tags TAGS
+
+.PHONY: all clean
