@@ -33,3 +33,5 @@ TAGS:
 
 clean:
 	$(RM) $(OBJECTS) $(BINARY) tags TAGS
+
+.PHONY: all clean
