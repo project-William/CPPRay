@@ -7,7 +7,7 @@ BINARY = CPPRay
 
 # Use mingw32 by default on windows
 ifeq ($(OS), Windows_NT)
-	LDLIBS = -lmingw32
+	LDLIBS = -lmingw32 -lSDL2main
 endif
 
 # Compiler flags
@@ -17,7 +17,7 @@ CXXFLAGS = -std=c++11 -Wall -Wextra
 LDFLAGS = -Wl,--as-needed
 
 # Linker libraries
-LDLIBS += -lSDL2main -lSDL2
+LDLIBS += -lSDL2
 
 # Object files to be created
 OBJECTS = main.o display.o engine.o mesh.o scene.o
