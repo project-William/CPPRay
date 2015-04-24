@@ -187,13 +187,28 @@ struct vec3
 
     static vec3 sampleHemisphere(const vec3 &N)
     {
-        float r1 = 2.0f * PI * pseudorand();
-        float r2 = pseudorand(), r2s = std::sqrt(r2);
+        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r2 = pseudorand();
+        float r2s = std::sqrt(r2);
         vec3 w = N; // w = normal
         vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
         vec3 v = cross(w, u); // v is perpendicular to u and w
         return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
     }
+
+    static vec3 sampleHemisphere(const vec3 &N, float scalar)
+    {
+        std::uniform_real_distribution<float>brdf_dis(0.0f, scalar);
+
+        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r2 = brdf_dis(gen); // Scale the angle around z-axis by a scalar, this way importance sampling is easy
+        float r2s = std::sqrt(r2);
+        vec3 w = N; // w = normal
+        vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
+        vec3 v = cross(w, u); // v is perpendicular to u and w
+        return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
+    }
+
 };
 
 }

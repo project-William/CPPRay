@@ -75,6 +75,8 @@ public:
     void calcNormal()
     {
         m_normals[0] = vec3::cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize();
+        m_normals[1] = m_normals[0];
+        m_normals[2] = m_normals[0];
     }
 
     void translate(vec3 v)
@@ -96,11 +98,6 @@ public:
         m_vertices[0] *= v;
         m_vertices[1] *= v;
         m_vertices[2] *= v;
-    }
-
-    std::string toString() const
-    {
-        return "Triangle[\n" + m_vertices[0].toString() + "\n" + m_vertices[1].toString() + "\n" + m_vertices[2].toString();
     }
 
     Material getMaterial() const

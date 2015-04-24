@@ -55,11 +55,11 @@ static float interpolate(float f, float edgea, float edgeb)
     return edgea + (edgeb - edgea) * clamp(f, 0.0f, 1.0f);
 }
 
-static vec3 interpolate(const vec3 &v, float edgea, float edgeb)
+static vec3 interpolate(const vec3 &v, float edgeax, float edgebx, float edgeay, float edgeby, float edgeaz, float edgebz)
 {
-    auto x = interpolate(v.x, edgea, edgeb);
-    auto y = interpolate(v.y, edgea, edgeb);
-    auto z = interpolate(v.z, edgea, edgeb);
+    auto x = interpolate(v.x, edgeax, edgebx);
+    auto y = interpolate(v.y, edgeay, edgeby);
+    auto z = interpolate(v.z, edgeaz, edgebz);
 
     return vec3(x, y, z);
 }

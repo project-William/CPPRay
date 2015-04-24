@@ -56,6 +56,14 @@ public:
         }
     }
 
+    void recalcNormals()
+    {
+        for (size_t i = 0; i < m_triangles.size(); i++)
+        {
+            m_triangles[i].calcNormal();
+        }
+    }
+
     std::vector<Triangle> getTriangles()
     {
         return m_triangles;

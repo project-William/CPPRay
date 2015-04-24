@@ -61,14 +61,16 @@ vec3 Engine::pathtrace(const Ray &r, int n)
     {
         // Get the random hemisphere and mirror reflection directions
         auto L_mirr = vec3::reflect(V_vector, N_vector).normalize();
-        auto L_rand = vec3::sampleHemisphere(L_mirr); // Normal plane is perpendicular to the mirror reflection
+        auto L_rand = vec3::sampleHemisphere(L_mirr, M_info.getRoughness()); // Normal plane is perpendicular to the mirror reflection
 
         // Check if the reflected ray aims through the surface, if true reflect against the normal plane
         if (vec3::dot(N_vector, L_rand) < 0.0f)
-            L_rand = vec3::reflect(L_rand, L_mirr).normalize();
+        {
+            L_rand = vec3::reflect(L_rand, N_vector).normalize();
+        }
 
-        // Temp surface values
-        float R = M_info.getRoughness();
+        // Get the surface values
+        float R = M_info.getRoughness() + EPSILON;
         float RR = R * R;
         float F = M_info.getFresnel();
         float K = M_info.getDensity();
@@ -100,10 +102,11 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         fresnel += F;
 
         // Put the terms together
-        float Rs = geo * rough * fresnel / (PI * NdotV * NdotL + EPSILON); // <-- Still unsure about this
+        float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
+        Rs *= R;
 
-        // Calculate the cook-torrance brdf value
-        auto BRDF = 2.0f * NdotL * (Rs * (1.0f - K) + K); // <-- Still unsure about this as well
+        // Calculate the cook-torrance brdf value, scale Rs by roughness for importance sampling
+        auto BRDF = 2.0f * NdotL * (Rs * (1.0f - K) + K);
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);

@@ -40,7 +40,7 @@ int Mesh::loadObj()
                 s >> v.z;
                 vertices.push_back(v);
             }
-            else if (line.substr(0, 2) == "vn ")
+            else if (line.substr(0, 3) == "vn ")
             {
                 std::istringstream s(line.substr(2));
                 vec3 n;
