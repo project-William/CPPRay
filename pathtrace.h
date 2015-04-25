@@ -56,7 +56,9 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         return f * BRDF * REFL;
     }
     // Glossy specular surfaces (Cook-torrance microfacet brdf model)
-    // TODO: Fix fireflies caused by really low roughness values
+    // TODO: Figure out a way to scale Rs according to roughness and so on...
+    // This is incorrect atm, it looks decent, but is just wrong.
+    // At least importance sampling works beautifully
     else if (M_info.getReflT() == GLOS)
     {
         // Get the random hemisphere and mirror reflection directions
@@ -103,10 +105,9 @@ vec3 Engine::pathtrace(const Ray &r, int n)
 
         // Put the terms together
         float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
-        Rs *= R;
 
-        // Calculate the cook-torrance brdf value, scale Rs by roughness for importance sampling
-        auto BRDF = 2.0f * NdotL * (Rs * (1.0f - K) + K);
+        // Calculate the cook-torrance brdf value
+        auto BRDF = 2.0f * NdotL * PI_1 * (Rs * (1.0f - K) + K);
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
