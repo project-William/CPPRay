@@ -6,20 +6,21 @@
 #include "intersection.h"
 #include "material.h"
 #include "math.h"
+#include "transform.h"
 
 class Sphere
 {
 public:
-    Sphere(vec3 position = vec3(), float radius = 1, Material material = Material()) : m_position(position), m_radius(radius), m_material(material) { }
+    Sphere(Transform transform = Transform(), Material material = Material()) : m_transform(transform), m_material(material) { }
 
     Intersection intersect(const Ray &r) const
     {
         vec3 SP;
         float t, b, d;
 
-        SP = m_position - r.getOrigin();
+        SP = getPosition() - r.getOrigin();
         b = vec3::dot(SP, r.getDirection());
-        d = b * b - vec3::dot(SP, SP) + m_radius * m_radius;
+        d = b * b - vec3::dot(SP, SP) + getRadius() * getRadius();
 
         if (d < 0.0f)
             return invalidIntersection;
@@ -32,16 +33,26 @@ public:
 
         auto x = Intersection();
         x.setPosition(r.getOrigin() + r.getDirection() * t);
-        x.setNormal((x.getPosition() - m_position) / m_radius);
+        x.setNormal((x.getPosition() - getPosition()) / getRadius());
         x.setT(t);
         x.setMaterial(m_material);
 
         return x;
     }
 
+    Transform getTransform() const
+    {
+        return m_transform;
+    }
+
     vec3 getPosition() const
     {
-        return m_position;
+        return m_transform.getPosition();
+    }
+
+    float getRadius() const
+    {
+        return m_transform.getScale().x;
     }
 
     Material getMaterial() const
@@ -49,8 +60,7 @@ public:
         return m_material;
     }
 private:
-    vec3 m_position;
-    float m_radius;
+    Transform m_transform;
     Material m_material;
 protected:
 };

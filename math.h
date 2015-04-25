@@ -13,6 +13,12 @@ namespace math
 #define PI 3.14159265359f
 #define PI_1 1.0f / PI
 
+struct vertex
+{
+    vec3 p;
+    vec3 n;
+};
+
 static vec3 pow(const vec3 &v, float f)
 {
     auto x = std::pow(v.x, f);

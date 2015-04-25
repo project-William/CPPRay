@@ -31,7 +31,10 @@ public:
 
         for (size_t i = 0; i < m_triangles.size(); i++)
         {
-            m_triangles[i].translate(m_transform.getPosition());
+            for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+            {
+                m_triangles[i].getVertices()[j].p += m_transform.getPosition();
+            }
         }
     }
 
@@ -42,7 +45,10 @@ public:
 
         for (size_t i = 0; i < m_triangles.size(); i++)
         {
-            m_triangles[i].rotate(m_transform.getRotation());
+            for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+            {
+                m_triangles[i].getVertices()[j].p = m_triangles[i].getVertices()[j].p * m_transform.getRotation();
+            }
         }
     }
 
@@ -52,15 +58,18 @@ public:
 
         for (size_t i = 0; i < m_triangles.size(); i++)
         {
-            m_triangles[i].scale(v);
+            for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+            {
+                m_triangles[i].getVertices()[j].p *= m_transform.getScale();
+            }
         }
     }
 
-    void recalcNormals()
+    void calculateNormals()
     {
         for (size_t i = 0; i < m_triangles.size(); i++)
         {
-            m_triangles[i].calcNormal();
+            m_triangles[i].calculateNormals();
         }
     }
 

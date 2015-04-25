@@ -104,13 +104,13 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         fresnel += F;
 
         // Put the terms together
-        float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
+        float Rs = (geo * rough * fresnel) / (4.0f * NdotV * NdotL + EPSILON);
 
         // Calculate the cook-torrance brdf value
         auto BRDF = 2.0f * NdotL * PI_1 * (Rs * (1.0f - K) + K);
 
         // Get the reflected light amount from L_rand
-        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
+        auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1) * PI_1;
 
         // Return the final radiance
         return f * BRDF * REFL;

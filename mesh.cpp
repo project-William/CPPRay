@@ -104,7 +104,7 @@ int Mesh::loadObj()
             vec3 n0 = normals[indices[i].na];
             vec3 n1 = normals[indices[i].nb];
             vec3 n2 = normals[indices[i].nc];
-            m_triangles.push_back(Triangle(v0, v1, v2, n0, n1, n2, m_material));
+            m_triangles.push_back(Triangle(v0, v1, v2, m_material));
         }
         else
         {

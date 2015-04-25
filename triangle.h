@@ -1,6 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
+#include <array>
 #include "vec3.h"
 #include "quaternion.h"
 #include "ray.h"
@@ -13,22 +14,9 @@ class Triangle
 public:
     Triangle(vec3 v0 = vec3(), vec3 v1 = vec3(), vec3 v2 = vec3(), Material material = Material()) : m_material(material)
     {
-        m_vertices[0] = v0;
-        m_vertices[1] = v1;
-        m_vertices[2] = v2;
-        calcNormal();
-        iNormals = false;
-    }
-
-    Triangle(vec3 v0 = vec3(), vec3 v1 = vec3(), vec3 v2 = vec3(), vec3 n0 = vec3(), vec3 n1 = vec3(), vec3 n2 = vec3(), Material material = Material()) : m_material(material)
-    {
-        m_vertices[0] = v0;
-        m_vertices[1] = v1;
-        m_vertices[2] = v2;
-        m_normals[0] = n0;
-        m_normals[1] = n1;
-        m_normals[2] = n2;
-        iNormals = true;
+        m_vertices[0].p = v0;
+        m_vertices[1].p = v1;
+        m_vertices[2].p = v2;
     }
 
     Intersection intersect(const Ray &r) const
@@ -36,8 +24,8 @@ public:
         vec3 P, Q, T;
         float d, inv_d, u, v, t;
 
-        vec3 edge_a = m_vertices[1] - m_vertices[0];
-        vec3 edge_b = m_vertices[2] - m_vertices[0];
+        vec3 edge_a = m_vertices[1].p - m_vertices[0].p;
+        vec3 edge_b = m_vertices[2].p - m_vertices[0].p;
 
         P = vec3::cross(r.getDirection(), edge_b);
         d = vec3::dot(edge_a, P);
@@ -46,7 +34,7 @@ public:
             return invalidIntersection;
 
         inv_d = 1.0f / d;
-        T = r.getOrigin() - m_vertices[0];
+        T = r.getOrigin() - m_vertices[0].p;
         u = vec3::dot(T, P) * inv_d;
 
         if (u < 0.0f || u > 1.0f)
@@ -65,50 +53,29 @@ public:
 
         auto x = Intersection();
         x.setPosition(r.getOrigin() + r.getDirection() * t);
-        x.setNormal(m_normals[0]);
+        x.setNormal(m_vertices[0].n);
         x.setT(t);
         x.setMaterial(m_material);
 
         return x;
     }
 
-    void calcNormal()
+    void calculateNormals()
     {
-        m_normals[0] = vec3::cross(m_vertices[1] - m_vertices[0], m_vertices[2] - m_vertices[0]).normalize();
-        m_normals[1] = m_normals[0];
-        m_normals[2] = m_normals[0];
+        for (auto &v : m_vertices)
+        {
+            v.n = vec3::cross(m_vertices[0].p - m_vertices[1].p, m_vertices[0].p - m_vertices[2].p).normalize();
+        }
     }
 
-    void translate(vec3 v)
+    std::array<vertex, 3> &getVertices()
     {
-        m_vertices[0] += v;
-        m_vertices[1] += v;
-        m_vertices[2] += v;
+        return m_vertices;
     }
 
-    void rotate(quaternion q)
-    {
-        m_vertices[0] = m_vertices[0] * q;
-        m_vertices[1] = m_vertices[1] * q;
-        m_vertices[2] = m_vertices[2] * q;
-    }
-
-    void scale(vec3 v)
-    {
-        m_vertices[0] *= v;
-        m_vertices[1] *= v;
-        m_vertices[2] *= v;
-    }
-
-    Material getMaterial() const
-    {
-        return m_material;
-    }
 private:
-    vec3 m_vertices[3];
-    vec3 m_normals[3];
+    std::array<vertex, 3> m_vertices;
     Material m_material;
-    bool iNormals;
 protected:
 };
 
