@@ -6,6 +6,8 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <map>
+#include <string>
 #include "assert.h"
 #include "vec3.h"
 #include "quaternion.h"
@@ -18,12 +20,13 @@ struct face
 {
     int va, vb, vc;
     int na, nb, nc;
+    std::string material;
 };
 
 class Mesh
 {
 public:
-    Mesh(char *fileName, Material material);
+    Mesh(std::string fileName, Material material);
 
     void translate(const vec3 v)
     {
@@ -81,8 +84,10 @@ private:
     // Very simple .obj model loader written by me
     // Only supports triangulated, non-textured faces atm
     int loadObj();
+    int loadMTL(std::map<std::string, Material> &materials);
 
-    char *m_fileName;
+    std::string m_mdlFileName;
+    std::string m_mtlFileName;
     Material m_material;
     Transform m_transform;
     std::vector<Triangle> m_triangles;

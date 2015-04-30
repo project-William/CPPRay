@@ -1,17 +1,17 @@
 #include "mesh.h"
 
-Mesh::Mesh(char *fileName, Material material)
+Mesh::Mesh(std::string fileName, Material material)
 {
-    m_fileName = fileName;
+    m_mdlFileName = fileName;
     m_material = material;
 
     if (loadObj() != 0)
     {
-        std::cerr << "Mesh: Error loading " << m_fileName << std::endl;
+        std::cerr << "Mesh: Error loading " << m_mdlFileName << std::endl;
         std::exit(1);
     }
 
-    std::cout << "Mesh: " << m_fileName << " has been loaded succesfully." << std::endl;
+    std::cout << "Mesh: " << m_mdlFileName << " has been loaded succesfully." << std::endl;
 }
 
 int Mesh::loadObj()
@@ -19,11 +19,15 @@ int Mesh::loadObj()
     std::vector<vec3> vertices;
     std::vector<vec3> normals;
     std::vector<face> indices;
+    std::map<std::string, Material> materials;
+    std::string str_currentMaterial = "";
 
     std::ifstream file;
     std::string line;
 
-    file.open(m_fileName);
+    std::cout << "Mesh: " << "Attempting to load: " << m_mdlFileName << std::endl;
+
+    file.open("res/" + m_mdlFileName);
 
     if (file.is_open())
     {
@@ -31,7 +35,21 @@ int Mesh::loadObj()
         {
             std::getline(file, line);
 
-            if (line.substr(0, 2) == "v ")
+            if (line.substr(0, 7) == "mtllib ")
+            {
+                m_mtlFileName = line.substr(7);
+
+                if (loadMTL(materials) != 0)
+                {
+                    std::cerr << "Mesh: Error loading " << m_mtlFileName << std::endl;
+                    std::exit(1);
+                }
+            }
+            else if (line.substr(0, 7) == "usemtl ")
+            {
+                str_currentMaterial = line.substr(7);
+            }
+            else if (line.substr(0, 2) == "v ")
             {
                 std::istringstream s(line.substr(2));
                 vec3 v;
@@ -42,7 +60,7 @@ int Mesh::loadObj()
             }
             else if (line.substr(0, 3) == "vn ")
             {
-                std::istringstream s(line.substr(2));
+                std::istringstream s(line.substr(3));
                 vec3 n;
                 s >> n.x;
                 s >> n.y;
@@ -61,6 +79,7 @@ int Mesh::loadObj()
                     f.va--;
                     f.vb--;
                     f.vc--;
+                    f.material = str_currentMaterial;
                     indices.push_back(f);
                 }
                 else
@@ -99,17 +118,110 @@ int Mesh::loadObj()
         vec3 v0 = vertices[indices[i].va];
         vec3 v1 = vertices[indices[i].vb];
         vec3 v2 = vertices[indices[i].vc];
+        Material mtl = m_material;
+
+        if (!str_currentMaterial.empty())
+        {
+            mtl = materials.at(indices[i].material);
+        }
+
         if (normals.size() > 0)
         {
             vec3 n0 = normals[indices[i].na];
             vec3 n1 = normals[indices[i].nb];
             vec3 n2 = normals[indices[i].nc];
-            m_triangles.push_back(Triangle(v0, v1, v2, m_material));
+            m_triangles.push_back(Triangle(v0, v1, v2, mtl));
         }
         else
         {
-            m_triangles.push_back(Triangle(v0, v1, v2, m_material));
+            m_triangles.push_back(Triangle(v0, v1, v2, mtl));
         }
+    }
+
+    return 0;
+}
+
+int Mesh::loadMTL(std::map<std::string, Material> &materials)
+{
+    std::string str_currentMaterial;
+    Material mat_currentMaterial;
+
+    std::ifstream file;
+    std::string line;
+
+    std::cout << "Mesh: " << "Attempting to load: " << m_mtlFileName << std::endl;
+
+    file.open("res/" + m_mtlFileName);
+
+    if (file.is_open())
+    {
+        while (file.good())
+        {
+            std::getline(file, line);
+
+            if (line.substr(0, 7) == "newmtl ")
+            {
+                str_currentMaterial = line.substr(7);
+                mat_currentMaterial = Material();
+                materials.insert(std::pair<std::string, Material>(str_currentMaterial, mat_currentMaterial));
+            }
+            else if (line.substr(0, 3) == "Kd ") // Diffuse color
+            {
+                std::istringstream s(line.substr(3));
+                vec3 kd;
+                s >> kd.x;
+                s >> kd.y;
+                s >> kd.z;
+                materials.at(str_currentMaterial).setReflectance(kd);
+            }
+            else if (line.substr(0, 3) == "Ka ") // Emissive color (Ka stands for ambient, but I use it for emittance)
+            {
+                std::istringstream s(line.substr(3));
+                vec3 ke;
+                s >> ke.x;
+                s >> ke.y;
+                s >> ke.z;
+                materials.at(str_currentMaterial).setEmittance(ke);
+            }
+            else if (line.substr(0, 3) == "Ni ") // Index of refraction
+            {
+                std::istringstream s(line.substr(3));
+                float ior;
+                s >> ior;
+                materials.at(str_currentMaterial).setIOR(ior);
+            }
+            else if (line.substr(0, 6) == "illum ") // Illumination mode
+            {
+                std::istringstream s(line.substr(6));
+                unsigned int illum;
+                s >> illum;
+
+                if (illum == 0 || illum == 1) // Diffuse surfaces
+                {
+                    materials.at(str_currentMaterial).setReflT(DIFF);
+                }
+                if (illum == 4 || illum == 6 || illum == 7 || illum == 9) // Dielectric sufraces
+                {
+                    materials.at(str_currentMaterial).setReflT(REFR);
+                }
+                else if (illum == 3) // Perfectly specular surfaces
+                {
+                    materials.at(str_currentMaterial).setReflT(SPEC);
+                }
+                else if (illum == 5) // Glossy reflective surfaces
+                {
+                    materials.at(str_currentMaterial).setReflT(GLOS);
+                }
+            }
+            else
+            {
+                continue;
+            }
+        }
+    }
+    else
+    {
+        return 1;
     }
 
     return 0;

@@ -60,6 +60,26 @@ public:
         return m_density;
     }
 
+    void setReflT(Refl_t t)
+    {
+        m_refl_t = t;
+    }
+
+    void setEmittance(vec3 emittance)
+    {
+        m_emittance = emittance;
+    }
+
+    void setReflectance(vec3 reflectance)
+    {
+        m_reflectance = reflectance;
+    }
+
+    void setIOR(float ior)
+    {
+        m_ior = ior;
+    }
+
 private:
     Refl_t m_refl_t;
     vec3 m_emittance;
