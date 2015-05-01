@@ -10,9 +10,30 @@ vec3 Engine::pathtrace(const Ray &r, int n)
     // Find the closest intersection
     auto xFinal = intersect(r, MAXDISTANCE);
 
-    // Return black if no intersection happened
+    // Return the directional light colors if we hit nothing, or ambient if we don't even hit them
     if (xFinal == invalidIntersection)
-        return COLOR_NULL;
+    {
+        if (m_scene.getSceneDirLights().empty())
+        {
+            return COLOR_AMBI;
+        }
+        else
+        {
+            for (auto &dl : m_scene.getSceneDirLights())
+            {
+                auto VdotL = vec3::dot(r.getDirection(), dl.orientation.getForwardVector());
+
+                if (VdotL < -0.95f)
+                {
+                    return dl.color;
+                }
+                else
+                {
+                    return COLOR_AMBI;
+                }
+            }
+        }
+    }
 
     // Return the emittance immediately if we hit an emissive surface
     if (xFinal.getMaterial().getEmittance().length() > 0.0f)
@@ -47,7 +68,7 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
 
         // Calculate the bidirectional reflectance function value
-        auto BRDF = 2.0f * NdotL * PI_1;
+        auto BRDF = 2.0f * NdotL * (PI_1 * BRDF_SCALAR);
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
@@ -104,10 +125,10 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         fresnel += F;
 
         // Put the terms together
-        float Rs = (geo * rough * fresnel) / (NdotV * NdotL + EPSILON);
+        float Rs = (geo * rough * fresnel) / (4.0f * NdotV * NdotL + EPSILON);
 
         // Calculate the cook-torrance brdf value
-        auto BRDF = 2.0f * NdotL * (R + EPSILON) * (Rs * (1.0f - K) + K);
+        auto BRDF = 2.0f * NdotL * (PI_1 * BRDF_SCALAR) * (Rs * (1.0f - K) + K);
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);

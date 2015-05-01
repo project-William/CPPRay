@@ -6,7 +6,8 @@
 #define SCALE 4
 #define THREADS -1
 #define GAMMA 2.25f
-#define RECURSION_MAX 5
+#define BRDF_SCALAR 1.0f
+#define RECURSION_MAX 3
 #define MAXDISTANCE 128
 #define SUPERSAMPLINGLEVEL 0
 #define SUPERSAMPLINGJITTER 0.001f

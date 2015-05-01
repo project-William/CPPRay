@@ -1,5 +1,5 @@
-# Blender MTL File: 'cornellbox.blend'
-# Material Count: 4
+# Blender MTL File: 'cornellbox_1.blend'
+# Material Count: 5
 
 newmtl mat_diff_blue
 Ns 96.078431
@@ -19,10 +19,19 @@ Ni 1.000000
 d 1.000000
 illum 1
 
+newmtl mat_diff_red
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.900000 0.100000 0.100000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+
 newmtl mat_diff_white
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
-Kd 0.873000 0.846496 0.900000
+Kd 0.900000 0.900000 0.900000
 Ks 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
@@ -30,9 +39,10 @@ illum 1
 
 newmtl mat_lamp
 Ns 96.078431
-Ka 20.000000 20.000000 20.000000
+Ka 0.000000 0.000000 0.000000
 Kd 0.000000 0.000000 0.000000
 Ks 0.000000 0.000000 0.000000
+Ke 25.000000 25.000000 25.000000
 Ni 1.000000
 d 1.000000
 illum 1

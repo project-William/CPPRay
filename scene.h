@@ -7,6 +7,13 @@
 #include "triangle.h"
 #include "mesh.h"
 
+struct dirLight
+{
+    dirLight(quaternion orientation = quaternion().identity(), vec3 color = vec3()) : orientation(orientation), color(color) { }
+    quaternion orientation;
+    vec3 color;
+};
+
 class Scene
 {
 public:
@@ -28,6 +35,11 @@ public:
         return m_triangles;
     }
 
+    std::vector<dirLight> getSceneDirLights()
+    {
+        return m_dirLights;
+    }
+
     std::vector<Sphere> getSceneLights()
     {
         std::vector<Sphere> result;
@@ -42,6 +54,7 @@ private:
     std::vector<Sphere> m_spheres;
     std::vector<Plane> m_planes;
     std::vector<Triangle> m_triangles;
+    std::vector<dirLight> m_dirLights;
 protected:
 };
 

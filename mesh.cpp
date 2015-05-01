@@ -99,6 +99,7 @@ int Mesh::loadObj()
                     f.nb--;
                     f.vc--;
                     f.nc--;
+                    f.material = str_currentMaterial;
                     indices.push_back(f);
                 }
             }
@@ -174,7 +175,7 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
                 s >> kd.z;
                 materials.at(str_currentMaterial).setReflectance(kd);
             }
-            else if (line.substr(0, 3) == "Ka ") // Emissive color (Ka stands for ambient, but I use it for emittance)
+            else if (line.substr(0, 3) == "Ke ") // Emissive color (Blender doesn't want to export it, so it has to be added manually to the .mtl file)
             {
                 std::istringstream s(line.substr(3));
                 vec3 ke;
@@ -225,4 +226,57 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
     }
 
     return 0;
+}
+
+void Mesh::translate(const vec3 v)
+{
+    m_transform.setPosition(m_transform.getPosition() + v);
+
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+        {
+            m_triangles[i].getVertices()[j].p += m_transform.getPosition();
+        }
+    }
+}
+
+void Mesh::rotate(const vec3 axis, float theta)
+{
+    auto q = quaternion().euler(axis.x, axis.y, axis.z, theta);
+    m_transform.setRotation((q * m_transform.getRotation()).normalize());
+
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+        {
+            m_triangles[i].getVertices()[j].p = m_triangles[i].getVertices()[j].p * m_transform.getRotation();
+        }
+    }
+}
+
+void Mesh::scale(const vec3 v)
+{
+    m_transform.setScale(v);
+
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        for (size_t j = 0; j < m_triangles[i].getVertices().size(); j++)
+        {
+            m_triangles[i].getVertices()[j].p *= m_transform.getScale();
+        }
+    }
+}
+
+void Mesh::calculateNormals()
+{
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        m_triangles[i].calculateNormals();
+    }
+}
+
+std::vector<Triangle> Mesh::getTriangles()
+{
+    return m_triangles;
 }
