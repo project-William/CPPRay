@@ -65,16 +65,19 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto L_vector = L_rand.negate();
 
         // Calculate all dot products
-        auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
+        auto NdotL = std::abs(vec3::dot(Nr_vector, L_vector));
 
         // Calculate the bidirectional reflectance function value
-        auto BRDF = 2.0f * NdotL * (PI_1 * BRDF_SCALAR);
+        auto BRDF = (f / PI) * NdotL;
+
+        // Calculate the probability density function value (1.0f / PI)
+        auto PDF = PI_1;
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
-        return f * BRDF * REFL;
+        return BRDF / PDF * REFL;
     }
     // Glossy specular surfaces (Cook-torrance microfacet brdf model)
     // TODO: Figure out a way to scale Rs according to roughness and so on...
@@ -128,13 +131,16 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         float Rs = (geo * rough * fresnel) / (4.0f * NdotV * NdotL + EPSILON);
 
         // Calculate the cook-torrance brdf value
-        auto BRDF = 2.0f * NdotL * (PI_1 * BRDF_SCALAR) * (Rs * (1.0f - K) + K);
+        auto BRDF = (f / PI) * NdotL * (Rs * (1.0f - K) + K);
+
+        // Calculate the probability density function value (1.0f / (PI * R))
+        auto PDF = 1.0f / (PI * R);
 
         // Get the reflected light amount from L_rand
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
-        return f * BRDF * REFL;
+        return BRDF / PDF * REFL;
     }
     // Mirror surfaces
     else if (M_info.getReflT() == SPEC)
