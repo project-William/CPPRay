@@ -68,6 +68,15 @@ public:
         }
     }
 
+    vec3 getCentroid()
+    {
+        float x = (m_vertices[0].p.x + m_vertices[1].p.x + m_vertices[2].p.x) / 3.0f;
+        float y = (m_vertices[0].p.y + m_vertices[1].p.y + m_vertices[2].p.y) / 3.0f;
+        float z = (m_vertices[0].p.z + m_vertices[1].p.z + m_vertices[2].p.z) / 3.0f;
+
+        return vec3(x, y, z);
+    }
+
     std::array<vertex, 3> &getVertices()
     {
         return m_vertices;
