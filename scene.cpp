@@ -17,5 +17,16 @@ Scene::Scene(int temp)
     m_spheres.push_back(Sphere(Transform(vec3(0.5f, -0.25f, 0), quaternion().identity(), vec3(0.25f, 0.25f, 0.25f)), mat_metal));
     m_spheres.push_back(Sphere(Transform(vec3(-0.5f, -0.75f, -0.25f), quaternion().identity(), vec3(0.25f, 0.25f, 0.25f)), mat_glass));
 
+    // Test building kd-tree
+    std::vector<vec3> pointlist;
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        std::array<vertex, 3> vertices = m_triangles[i].getVertices();
+        pointlist.push_back(vertices[0].p);
+        pointlist.push_back(vertices[1].p);
+        pointlist.push_back(vertices[2].p);
+    }
+    m_kdTree = accelerator::KDTree(pointlist, 3);
+
     std::cout << "Initialized a new Scene succesfully." << std::endl;
 }

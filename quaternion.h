@@ -19,7 +19,9 @@ struct quaternion
 
     std::string toString() const
     {
-        return "quaternion[" + std::to_string(w) + " " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + "]";
+        char buffer[64];
+        sprintf(buffer, "quaternion[%.2f %.2f %.2f %.2f]", w, x, y, z);
+        return std::string(buffer);
     }
 
     quaternion operator*(const quaternion &q) const

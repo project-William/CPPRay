@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include <vector>
+#include "accelerator.h"
 #include "sphere.h"
 #include "plane.h"
 #include "triangle.h"
@@ -55,6 +56,7 @@ private:
     std::vector<Plane> m_planes;
     std::vector<Triangle> m_triangles;
     std::vector<dirLight> m_dirLights;
+    accelerator::KDTree m_kdTree;
 protected:
 };
 

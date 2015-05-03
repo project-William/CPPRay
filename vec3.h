@@ -28,7 +28,9 @@ struct vec3
 
     std::string toString() const
     {
-        return "vec3[" + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + "]";
+        char buffer[64];
+        sprintf(buffer, "vec3[%.2f %.2f %.2f]", x, y, z);
+        return std::string(buffer);
     }
 
     bool operator==(const vec3 &other) const
