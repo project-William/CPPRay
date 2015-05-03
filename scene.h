@@ -18,8 +18,7 @@ struct dirLight
 class Scene
 {
 public:
-    Scene(int temp);
-    Scene() { }
+    Scene();
 
     std::vector<Sphere> getSceneSpheres()
     {

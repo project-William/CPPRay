@@ -21,12 +21,12 @@ struct KDNode
 
     ~KDNode()
     {
-        // Just a placeholder for debugging...
         std::cout << "Deleting a KDNode!" << " Depth: " << depth << " Position: " << position.toString() << std::endl;
-        //if (left != nullptr)
-        //    delete left;
-        //if (right != nullptr)
-        //    delete right;
+
+        if (left != nullptr)
+            delete left;
+        if (right != nullptr)
+            delete right;
     }
 
     bool isLeaf()
@@ -42,9 +42,18 @@ struct KDNode
 class KDTree
 {
 public:
-    KDTree(std::vector<vec3> pointlist = { }, unsigned int k = 3) : m_root(0), m_k(k)
+    KDTree(unsigned int k = 3) : m_root(0), m_k(k) { }
+
+    void init(std::vector<vec3> pointlist)
     {
+        std::cout << "KDTree: Building... Size: " << pointlist.size() << std::endl;
         build(&m_root, pointlist);
+        std::cout << "KDTree: Build finished!" << std::endl;
+    }
+
+    KDNode getRoot()
+    {
+        return m_root;
     }
 private:
     void build(KDNode *node, std::vector<vec3> pointlist)

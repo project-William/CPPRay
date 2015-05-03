@@ -44,9 +44,9 @@ private:
 
     unsigned int m_threads;
     sampler *m_sampler;
-    Scene m_scene;
     Display *m_display;
     Camera *m_camera;
+    Scene m_scene;
 };
 
 #endif

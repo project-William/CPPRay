@@ -1,6 +1,6 @@
 #include "scene.h"
 
-Scene::Scene(int temp)
+Scene::Scene()
 {
     //m_dirLights.push_back(dirLight(quaternion().euler(1, 0, 0, 60.0f) * quaternion().euler(0, 1, 0, 20.0f), vec3(25, 25, 25)));
 
@@ -26,7 +26,8 @@ Scene::Scene(int temp)
         pointlist.push_back(vertices[1].p);
         pointlist.push_back(vertices[2].p);
     }
-    m_kdTree = accelerator::KDTree(pointlist, 3);
+    m_kdTree = accelerator::KDTree(3);
+    m_kdTree.init(pointlist);
 
     std::cout << "Initialized a new Scene succesfully." << std::endl;
 }
