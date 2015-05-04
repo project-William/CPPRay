@@ -12,20 +12,15 @@
 class Triangle
 {
 public:
-    Triangle(vec3 v0 = vec3(), vec3 v1 = vec3(), vec3 v2 = vec3(), Material material = Material()) : m_material(material)
-    {
-        m_vertices[0].p = v0;
-        m_vertices[1].p = v1;
-        m_vertices[2].p = v2;
-    }
+    Triangle(std::array<vertex, 3> vertices = { }, Material material = Material()) : m_vertices(vertices), m_material(material) { }
 
     Intersection intersect(const Ray &r) const
     {
         vec3 P, Q, T;
-        float d, inv_d, u, v, t;
+        float d, inv_d, u, v, t, b0, b1, b2;
 
-        vec3 edge_a = m_vertices[1].p - m_vertices[0].p;
-        vec3 edge_b = m_vertices[2].p - m_vertices[0].p;
+        const vec3 edge_a = m_vertices[1].p - m_vertices[0].p;
+        const vec3 edge_b = m_vertices[2].p - m_vertices[0].p;
 
         P = vec3::cross(r.getDirection(), edge_b);
         d = vec3::dot(edge_a, P);
@@ -53,14 +48,20 @@ public:
 
         auto x = Intersection();
         x.setPosition(r.getOrigin() + r.getDirection() * t);
-        x.setNormal(m_vertices[0].n);
         x.setT(t);
         x.setMaterial(m_material);
+        getBarycentric(edge_a, edge_b, x.getPosition(), b0, b1, b2);
+        vec3 N1 = m_vertices[0].n;
+        vec3 N2 = m_vertices[1].n;
+        vec3 N3 = m_vertices[2].n;
+        vec3 N = N1 + b1 * (N2 - N1) + b2 * (N3 - N1);
+        N = N.normalize();
+        x.setNormal(N);
 
         return x;
     }
 
-    void calculateNormals()
+    void calcFlatNormals()
     {
         for (auto &v : m_vertices)
         {
@@ -68,7 +69,24 @@ public:
         }
     }
 
-    vec3 getCentroid()
+    void getBarycentric(const vec3 &u, const vec3 &v, const vec3 &hit, float &b0, float &b1, float &b2) const
+    {
+        const vec3 w = hit - m_vertices[0].p;
+
+        const vec3 vCrossW = vec3::cross(v, w);
+        const vec3 uCrossW = vec3::cross(u, w);
+        const vec3 uCrossV = vec3::cross(u, v);
+
+        const float denom = uCrossV.length();
+        const float r = vCrossW.length() / denom;
+        const float t = uCrossW.length() / denom;
+
+        b0 = 1.0f - r - t;
+        b1 = r;
+        b2 = t;
+    }
+
+    vec3 getCentroid() const
     {
         float x = (m_vertices[0].p.x + m_vertices[1].p.x + m_vertices[2].p.x) / 3.0f;
         float y = (m_vertices[0].p.y + m_vertices[1].p.y + m_vertices[2].p.y) / 3.0f;

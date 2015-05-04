@@ -13,10 +13,35 @@ namespace accelerator
 
 using namespace math;
 
+struct sort_by_x
+{
+    inline bool operator() (Triangle &t1, Triangle &t2)
+    {
+        return (t1.getCentroid().x < t2.getCentroid().x);
+    }
+};
+
+struct sort_by_y
+{
+    inline bool operator() (Triangle &t1, Triangle &t2)
+    {
+        return (t1.getCentroid().y < t2.getCentroid().y);
+    }
+};
+
+struct sort_by_z
+{
+    inline bool operator() (Triangle &t1, Triangle &t2)
+    {
+        return (t1.getCentroid().z < t2.getCentroid().z);
+    }
+};
+
 struct KDNode
 {
     KDNode(unsigned int depth) : depth(depth)
     {
+        triangle = nullptr;
         left = nullptr;
         right = nullptr;
     }
@@ -26,6 +51,8 @@ struct KDNode
         if (!isLeaf())
             std::cout << "KDNode: Destructor called! " << " Depth: " << depth << " Position: " << median.toString() << std::endl;
 
+        if (triangle != nullptr)
+            triangle = nullptr;
         if (left != nullptr)
             delete left;
         if (right != nullptr)
@@ -34,7 +61,7 @@ struct KDNode
 
     bool isLeaf()
     {
-        return (left == nullptr) & (right == nullptr);
+        return (left == nullptr) && (right == nullptr);
     }
 
     unsigned int depth;
@@ -43,36 +70,12 @@ struct KDNode
     KDNode *left, *right;
 };
 
-struct sort_by_x
-{
-    inline bool operator() (const Triangle &t1, const Triangle &t2)
-    {
-        return (t1.getCentroid().x < t2.getCentroid().x);
-    }
-};
-
-struct sort_by_y
-{
-    inline bool operator() (const Triangle &t1, const Triangle &t2)
-    {
-        return (t1.getCentroid().y < t2.getCentroid().y);
-    }
-};
-
-struct sort_by_z
-{
-    inline bool operator() (const Triangle &t1, const Triangle &t2)
-    {
-        return (t1.getCentroid().z < t2.getCentroid().z);
-    }
-};
-
 class KDTree
 {
 public:
-    KDTree(unsigned int k = 3) : m_root(0), m_k(k) { }
+    KDTree(unsigned int k = 3) : m_k(k), m_root(0) { }
 
-    void init(std::vector<Triangle> triangles)
+    void init(std::vector<Triangle> &triangles)
     {
 
         std::cout << "KDTree: Building... Size: " << triangles.size() << std::endl;
@@ -85,11 +88,6 @@ public:
         float duration = time / (double) CLOCKS_PER_SEC;
 
         std::cout << "KDTree: Build finished! Time taken: " << duration << "s." << std::endl;
-    }
-
-    KDNode getRoot()
-    {
-        return m_root;
     }
 private:
     void build(KDNode *node, std::vector<Triangle> triangles)

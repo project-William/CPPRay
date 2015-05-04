@@ -5,11 +5,13 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <array>
 #include <vector>
 #include <map>
 #include <string>
 #include "assert.h"
 #include "vec3.h"
+#include "math.h"
 #include "quaternion.h"
 #include "transform.h"
 #include "triangle.h"
@@ -26,12 +28,12 @@ struct face
 class Mesh
 {
 public:
-    Mesh(std::string fileName, Material material);
+    Mesh(std::string fileName, Material material, bool flatNormals);
 
     void translate(const vec3 v);
     void rotate(const vec3 axis, float theta);
     void scale(const vec3 v);
-    void calculateNormals();
+    void calcFlatNormals();
     std::vector<Triangle> getTriangles();
 private:
     // Very simple .obj model loader written by me

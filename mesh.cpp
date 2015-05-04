@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-Mesh::Mesh(std::string fileName, Material material)
+Mesh::Mesh(std::string fileName, Material material, bool flatNormals)
 {
     m_mdlFileName = fileName;
     m_material = material;
@@ -10,6 +10,9 @@ Mesh::Mesh(std::string fileName, Material material)
         std::cerr << "Mesh: Error loading " << m_mdlFileName << std::endl;
         std::exit(1);
     }
+
+    if (flatNormals)
+        calcFlatNormals();
 
     std::cout << "Mesh: " << m_mdlFileName << " has been loaded succesfully." << std::endl;
 }
@@ -116,9 +119,11 @@ int Mesh::loadObj()
 
     for (size_t i = 0; i < indices.size(); i++)
     {
-        vec3 v0 = vertices[indices[i].va];
-        vec3 v1 = vertices[indices[i].vb];
-        vec3 v2 = vertices[indices[i].vc];
+        std::array<vertex, 3> verts;
+        verts[0].p = vertices[indices[i].va];
+        verts[1].p = vertices[indices[i].vb];
+        verts[2].p = vertices[indices[i].vc];
+
         Material mtl = m_material;
 
         if (!str_currentMaterial.empty())
@@ -128,15 +133,12 @@ int Mesh::loadObj()
 
         if (normals.size() > 0)
         {
-            vec3 n0 = normals[indices[i].na];
-            vec3 n1 = normals[indices[i].nb];
-            vec3 n2 = normals[indices[i].nc];
-            m_triangles.push_back(Triangle(v0, v1, v2, mtl));
+            verts[0].n = normals[indices[i].na];
+            verts[1].n = normals[indices[i].nb];
+            verts[2].n = normals[indices[i].nc];
         }
-        else
-        {
-            m_triangles.push_back(Triangle(v0, v1, v2, mtl));
-        }
+
+        m_triangles.push_back(Triangle(verts, mtl));
     }
 
     return 0;
@@ -268,11 +270,11 @@ void Mesh::scale(const vec3 v)
     }
 }
 
-void Mesh::calculateNormals()
+void Mesh::calcFlatNormals()
 {
     for (size_t i = 0; i < m_triangles.size(); i++)
     {
-        m_triangles[i].calculateNormals();
+        m_triangles[i].calcFlatNormals();
     }
 }
 
