@@ -4,9 +4,6 @@ vec3 Engine::pathtrace(const Ray &r, int n)
     if (n > RECURSION_MAX)
         return COLOR_NULL;
 
-    // Initialize all pathtracing data
-    auto radiance = vec3();
-
     // Find the closest intersection
     auto xFinal = intersect(r, MAXDISTANCE);
 
@@ -36,7 +33,7 @@ vec3 Engine::pathtrace(const Ray &r, int n)
     }
 
     // Return the emittance immediately if we hit an emissive surface
-    if (xFinal.getMaterial().getEmittance().length() > 0.0f)
+    if (xFinal.getMaterial().getEmittance().length() > 0.0f && xFinal.getMaterial().getReflectance().length() <= 0.0f)
     {
         return xFinal.getMaterial().getEmittance();
     }
@@ -47,6 +44,7 @@ vec3 Engine::pathtrace(const Ray &r, int n)
     auto N_vector = xFinal.getNormal();
     auto Nr_vector = vec3::dot(N_vector, V_vector) < 0.0f ? N_vector : N_vector.negate();
     auto M_info = xFinal.getMaterial();
+    auto e = M_info.getEmittance();
     auto f = M_info.getReflectance();
 
     // Russian roulette, use maximum reflectance amount
@@ -77,7 +75,7 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
-        return BRDF / PDF * REFL;
+        return e + BRDF / PDF * REFL;
     }
     // Glossy specular surfaces (Cook-torrance microfacet brdf model)
     // TODO: Figure out a way to scale Rs according to roughness and so on...
@@ -140,12 +138,12 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto REFL = pathtrace(Ray(P_vector, L_rand), n + 1);
 
         // Return the final radiance
-        return BRDF / PDF * REFL;
+        return e + BRDF / PDF * REFL;
     }
     // Mirror surfaces
     else if (M_info.getReflT() == SPEC)
     {
-        return f * pathtrace(Ray(P_vector, vec3::reflect(V_vector, N_vector)), n + 1);
+        return e + f * pathtrace(Ray(P_vector, vec3::reflect(V_vector, N_vector)), n + 1);
     }
     // Dielectric surfaces, taken nearly directly from the smallpt powerpoint presentation, because it is so good and accurate.
     else if (M_info.getReflT() == REFR)
@@ -162,10 +160,10 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto tdir = (V_vector * nnt - N_vector * ((into ? 1.0f : -1.0f) * (ddn * nnt + std::sqrt(cos2t)))).normalize();
         auto a = nt - nc, b = nt + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -ddn : vec3::dot(tdir, N_vector));
         auto Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P = 0.25f + 0.5f * Re, RP = Re / P, TP = Tr / (1.0f - P);
-        return f * (n > 2 ? (math::pseudorand() < P ?
-                             pathtrace(r_reflected, n + 1) * RP : pathtrace(Ray(P_vector, tdir), n + 1) * TP):
+        return e + f * (n > 2 ? (math::pseudorand() < P ?
+                    pathtrace(r_reflected, n + 1) * RP : pathtrace(Ray(P_vector, tdir), n + 1) * TP):
                     pathtrace(r_reflected, n + 1) * Re + pathtrace(Ray(P_vector, tdir), n + 1) * Tr);
     }
 
-    return radiance;
+    return e + f;
 }

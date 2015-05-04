@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <ctime>
+#include "config.h"
 #include "vec3.h"
 #include "triangle.h"
 
@@ -53,6 +54,7 @@ struct KDNode
 
         if (triangle != nullptr)
             triangle = nullptr;
+
         if (left != nullptr)
             delete left;
         if (right != nullptr)
@@ -92,7 +94,7 @@ public:
 private:
     void build(KDNode *node, std::vector<Triangle> triangles)
     {
-        if (triangles.size() <= 1)
+        if (triangles.size() <= KDTREE_MIN_TRIS)
             return;
 
         const unsigned int depth = node->depth;

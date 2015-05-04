@@ -79,9 +79,23 @@ int Mesh::loadObj()
                     s >> f.va;
                     s >> f.vb;
                     s >> f.vc;
-                    f.va--;
-                    f.vb--;
-                    f.vc--;
+
+                    if (f.va < 0 || f.vb < 0 || f.vc < 0)
+                    {
+                        f.va = vertices.size() + f.va;
+                        f.vb = vertices.size() + f.vb;
+                        f.vc = vertices.size() + f.vc;
+                        f.va++;
+                        f.vb++;
+                        f.vc++;
+                    }
+                    else
+                    {
+                        f.va--;
+                        f.vb--;
+                        f.vc--;
+                    }
+
                     f.material = str_currentMaterial;
                     indices.push_back(f);
                 }
@@ -96,12 +110,39 @@ int Mesh::loadObj()
                     s >> f.nb;
                     s >> f.vc;
                     s >> f.nc;
-                    f.va--;
-                    f.na--;
-                    f.vb--;
-                    f.nb--;
-                    f.vc--;
-                    f.nc--;
+
+                    if (f.va < 0 || f.vb < 0 || f.vc < 0)
+                    {
+                        f.va = vertices.size() + f.va;
+                        f.vb = vertices.size() + f.vb;
+                        f.vc = vertices.size() + f.vc;
+                        f.va++;
+                        f.vb++;
+                        f.vc++;
+                    }
+                    else
+                    {
+                        f.va--;
+                        f.vb--;
+                        f.vc--;
+                    }
+
+                    if (f.na < 0 || f.nb < 0 || f.nc < 0)
+                    {
+                        f.na = normals.size() + f.na;
+                        f.nb = normals.size() + f.nb;
+                        f.nc = normals.size() + f.nc;
+                        f.na++;
+                        f.nb++;
+                        f.nc++;
+                    }
+                    else
+                    {
+                        f.na--;
+                        f.nb--;
+                        f.nc--;
+                    }
+
                     f.material = str_currentMaterial;
                     indices.push_back(f);
                 }
@@ -175,6 +216,9 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
                 s >> kd.x;
                 s >> kd.y;
                 s >> kd.z;
+
+                std::cout << kd.toString() << std::endl;
+
                 materials.at(str_currentMaterial).setReflectance(kd);
             }
             else if (line.substr(0, 3) == "Ke ") // Emissive color (Blender doesn't want to export it, so it has to be added manually to the .mtl file)
