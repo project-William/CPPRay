@@ -216,9 +216,6 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
                 s >> kd.x;
                 s >> kd.y;
                 s >> kd.z;
-
-                std::cout << kd.toString() << std::endl;
-
                 materials.at(str_currentMaterial).setReflectance(kd);
             }
             else if (line.substr(0, 3) == "Ke ") // Emissive color (Blender doesn't want to export it, so it has to be added manually to the .mtl file)

@@ -40,21 +40,10 @@ struct sort_by_z
 
 struct KDNode
 {
-    KDNode(unsigned int depth) : depth(depth)
-    {
-        triangle = nullptr;
-        left = nullptr;
-        right = nullptr;
-    }
+    KDNode(unsigned int depth) : depth(depth), left(nullptr), right(nullptr) { }
 
     ~KDNode()
     {
-        if (!isLeaf())
-            std::cout << "KDNode: Destructor called! " << " Depth: " << depth << " Position: " << median.toString() << std::endl;
-
-        if (triangle != nullptr)
-            triangle = nullptr;
-
         if (left != nullptr)
             delete left;
         if (right != nullptr)
@@ -68,8 +57,8 @@ struct KDNode
 
     unsigned int depth;
     vec3 median;
-    Triangle *triangle;
     KDNode *left, *right;
+    std::vector<Triangle> data;
 };
 
 class KDTree
@@ -79,7 +68,6 @@ public:
 
     void init(std::vector<Triangle> &triangles)
     {
-
         std::cout << "KDTree: Building... Size: " << triangles.size() << std::endl;
 
         std::clock_t startTime = std::clock();
@@ -94,11 +82,9 @@ public:
 private:
     void build(KDNode *node, std::vector<Triangle> triangles)
     {
-        if (triangles.size() <= KDTREE_MIN_TRIS)
-            return;
-
         const unsigned int depth = node->depth;
         const unsigned int axis = depth % m_k;
+        const unsigned int median = static_cast<unsigned int>(triangles.size() >> 1);
 
         if (axis == 0)
             std::sort(triangles.begin(), triangles.end(), sort_by_x());
@@ -107,10 +93,15 @@ private:
         else
             std::sort(triangles.begin(), triangles.end(), sort_by_z());
 
-        const unsigned int median = static_cast<unsigned int>(triangles.size() >> 1);
-
         node->median = triangles[median].getCentroid();
-        node->triangle = &triangles[median];
+
+        if (triangles.size() <= KDTREE_MIN_TRIS)
+        {
+            std::cout << "KDTree: Created a leaf size of " << triangles.size() << " D: " << node->depth << " A: " << axis << " N: " << node->median.toString() << std::endl;
+            node->data.insert(node->data.end(), triangles.begin(), triangles.end());
+            return;
+        }
+
         node->left = new KDNode(depth + 1);
         node->right = new KDNode(depth + 1);
 
@@ -119,7 +110,7 @@ private:
         std::copy(triangles.begin(), triangles.begin() + median, leftlist.begin());
         std::copy(triangles.begin() + median, triangles.end(), rightlist.begin());
 
-        std::cout << "KDTree: l: " << leftlist.size() << " | r: " << rightlist.size() << " | m: " << median << " | d: " << depth << " | a: " << axis << " | n: " << node->median.toString() << std::endl;
+        std::cout << "KDTree: Created a branch at " << node->median.toString() << " L: " << leftlist.size() << " R: " << rightlist.size() << " D: " << node->depth << " A: " << axis << std::endl;
 
         build(node->left, leftlist);
         build(node->right, rightlist);

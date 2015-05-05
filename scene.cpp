@@ -2,7 +2,7 @@
 
 Scene::Scene()
 {
-    //m_dirLights.push_back(dirLight(quaternion().euler(1, 0, 0, 70.0f) * quaternion().euler(0, 1, 0, -25.0f), vec3(25, 25, 25)));
+    //m_dirLights.push_back(dirLight(quaternion().euler(1, 0, 0, 110.0f) * quaternion().euler(0, 1, 0, -25.0f), vec3(5, 5, 5)));
 
     Mesh cornellbox("cornellbox.obj", Material(), false);
 
