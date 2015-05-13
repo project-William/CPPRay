@@ -50,6 +50,11 @@ public:
         }
         return result;
     }
+
+    accelerator::KDTree &getKDTree()
+    {
+        return m_kdTree;
+    }
 private:
     std::vector<Sphere> m_spheres;
     std::vector<Plane> m_planes;

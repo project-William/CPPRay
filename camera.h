@@ -7,10 +7,15 @@
 
 using namespace math;
 
+enum camera_t
+{
+    ORTHOGRAPHIC, PERSPECTIVE
+};
+
 class Camera
 {
 public:
-    Camera(Transform transform = Transform(), float speed = 2, float sensitivity = 100) : m_transform(transform), m_speed(speed), m_sensitivity(sensitivity) { }
+    Camera(camera_t projection = ORTHOGRAPHIC, Transform transform = Transform(), float speed = 2, float sensitivity = 100, float zoom = 0.1f) : m_projection(projection), m_transform(transform), m_speed(speed), m_sensitivity(sensitivity), m_zoom(zoom) { }
 
     void move(const vec3 &direction, float dt)
     {
@@ -21,6 +26,11 @@ public:
     {
         auto q = quaternion().euler(axis.x, axis.y, axis.z, m_sensitivity * dt);
         m_transform.setRotation((q * m_transform.getRotation()).normalize());
+    }
+
+    void setProjection(camera_t projection)
+    {
+        m_projection = projection;
     }
 
     void setTransform(Transform t)
@@ -43,15 +53,32 @@ public:
         m_transform.setScale(scale);
     }
 
+    void setZoom(float zoom)
+    {
+        m_zoom += zoom;
+    }
+
+    camera_t getProjection() const
+    {
+        return m_projection;
+    }
+
     Transform getTransform() const
     {
         return m_transform;
     }
 
+    float getZoom() const
+    {
+        return m_zoom;
+    }
+
 private:
+    camera_t m_projection;
     Transform m_transform;
     float m_speed;
     float m_sensitivity;
+    float m_zoom;
 };
 
 #endif

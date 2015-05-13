@@ -211,7 +211,6 @@ struct vec3
 };
 
 // Backwards operators
-
 inline vec3 operator+(float f, const vec3 &v)
 {
     return v + f;

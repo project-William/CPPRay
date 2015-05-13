@@ -38,8 +38,12 @@ int main(int argc, char** argv)
     // Initialize the main display object by loading it into the stack
     Display display("C++Ray", WIDTH, HEIGHT, SCALE);
 
-    // Initialize the main camera
-    Camera camera(Transform(vec3(0, 1, 3)), 2, 100);
+    // Initialize the main cameras
+    Camera camera_ortho(ORTHOGRAPHIC, Transform(vec3(0, 1, 2)), 2, 100, 0.02f);
+    Camera camera_persp(PERSPECTIVE, Transform(vec3(0, 1, 2)), 2, 100, 0.02f);
+
+    // Choose the ortho camera as main camera for now...
+    Camera &camera = camera_ortho;
 
     // Initialize the main engine object that handles the tracing
     Engine engine(&display, &camera, tcount);
@@ -63,8 +67,8 @@ int main(int argc, char** argv)
         frameTime = 1.0f / deltaTime;
 
         // Display info in console every 100th sample
-        if (engine.getSamplesPPX() % 100 == 0)
-            printf("dt: %.5f fps: %.5f sppx: %i\nrays cast per second: %.5f\n", deltaTime, frameTime, engine.getSamplesPPX(), WIDTH * HEIGHT * frameTime);
+        //if (engine.getSamplesPPX() % 100 == 0)
+        //    printf("dt: %.5f fps: %.5f sppx: %i\nrays cast per second: %.5f\n", deltaTime, frameTime, engine.getSamplesPPX(), WIDTH * HEIGHT * frameTime);
 
         // Calculate rendering of the scene
         engine.update(deltaTime);
@@ -110,6 +114,22 @@ int main(int argc, char** argv)
             camera.rotate(camera.getTransform().getRotation().getForwardVector(), -deltaTime);
         else if (Input::g_keys[SDL_SCANCODE_E])
             camera.rotate(camera.getTransform().getRotation().getForwardVector(), deltaTime);
+
+        if (Input::g_keys[SDL_SCANCODE_KP_PLUS])
+            camera.setZoom(0.1f * deltaTime);
+        else if (Input::g_keys[SDL_SCANCODE_KP_MINUS])
+            camera.setZoom(-0.1f * deltaTime);
+
+        if (Input::g_keys[SDL_SCANCODE_1])
+        {
+            camera = camera_ortho;
+            camera.setProjection(ORTHOGRAPHIC);
+        }
+        if (Input::g_keys[SDL_SCANCODE_2])
+        {
+            camera = camera_persp;
+            camera.setProjection(PERSPECTIVE);
+        }
 
         // Clear all samples if any key is pressed
         for (unsigned int i = 0; i < sizeof(Input::g_keys) / sizeof(*Input::g_keys); i++)

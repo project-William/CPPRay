@@ -5,12 +5,14 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include "accelerator.h"
 #include "config.h"
 #include "display.h"
 #include "camera.h"
 #include "math.h"
 #include "vec3.h"
 #include "quaternion.h"
+#include "projection.h"
 #include "sphere.h"
 #include "plane.h"
 #include "triangle.h"
