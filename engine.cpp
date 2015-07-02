@@ -2,7 +2,7 @@
 #include "pathtrace.h"
 
 const vec3 Engine::COLOR_NULL = vec3();
-const vec3 Engine::COLOR_AMBI = vec3(0.52f, 0.80f, 0.98f);
+const vec3 Engine::COLOR_AMBI = vec3(0.75f, 0.87f, 0.98f);
 
 Engine::Engine(Display *display, Camera *camera, unsigned int threads)
 {

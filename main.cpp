@@ -39,8 +39,8 @@ int main(int argc, char** argv)
     Display display("C++Ray", WIDTH, HEIGHT, SCALE);
 
     // Initialize the main cameras
-    Camera camera_ortho(ORTHOGRAPHIC, Transform(vec3(0, 1, 2)), 2, 100, 0.02f);
-    Camera camera_persp(PERSPECTIVE, Transform(vec3(0, 1.5f, 3.3f), quaternion().euler(1, 0, 0, -10)), 2, 100, 0.02f);
+    Camera camera_ortho(ORTHOGRAPHIC, Transform(vec3(0, 0.5f, 2.5f)), 2, 100, 0.02f);
+    Camera camera_persp(PERSPECTIVE, Transform(vec3(0, 0.5f, 2.5f), quaternion().euler(1, 0, 0, -10)), 2, 100, 0.02f);
 
     // Choose the ortho camera as main camera for now...
     Camera camera = camera_persp;

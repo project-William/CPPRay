@@ -48,7 +48,7 @@ int Mesh::loadObj()
                     std::exit(1);
                 }
             }
-            else if (line.substr(0, 7) == "usemtl ")
+            else if (line.substr(0, 7) == "usemtl " && !materials.empty())
             {
                 str_currentMaterial = line.substr(7);
             }
@@ -167,7 +167,7 @@ int Mesh::loadObj()
 
         Material mtl = m_material;
 
-        if (!str_currentMaterial.empty())
+        if (!str_currentMaterial.empty() || !materials.empty())
         {
             mtl = materials.at(indices[i].material);
         }
