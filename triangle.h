@@ -95,6 +95,28 @@ public:
         return vec3(x, y, z);
     }
 
+    vec3 getMaximum() const
+    {
+        vec3 result;
+
+        result.x = std::max(m_vertices[0].p.x, std::max(m_vertices[1].p.x, m_vertices[2].p.x));
+        result.y = std::max(m_vertices[0].p.y, std::max(m_vertices[1].p.y, m_vertices[2].p.y));
+        result.z = std::max(m_vertices[0].p.z, std::max(m_vertices[1].p.z, m_vertices[2].p.z));
+
+        return result;
+    }
+
+    vec3 getMinimum() const
+    {
+        vec3 result;
+
+        result.x = std::min(m_vertices[0].p.x, std::min(m_vertices[1].p.x, m_vertices[2].p.x));
+        result.y = std::min(m_vertices[0].p.y, std::min(m_vertices[1].p.y, m_vertices[2].p.y));
+        result.z = std::min(m_vertices[0].p.z, std::min(m_vertices[1].p.z, m_vertices[2].p.z));
+
+        return result;
+    }
+
     std::array<vertex, 3> &getVertices()
     {
         return m_vertices;

@@ -126,7 +126,7 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         fresnel += F;
 
         // Put the terms together
-        float Rs = (geo * rough * fresnel) / (4.0f * NdotV * NdotL + EPSILON);
+        float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
 
         // Calculate the cook-torrance brdf value
         auto BRDF = (f / PI) * NdotL * (Rs * (1.0f - K) + K);
@@ -161,8 +161,8 @@ vec3 Engine::pathtrace(const Ray &r, int n)
         auto a = nt - nc, b = nt + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -ddn : vec3::dot(tdir, N_vector));
         auto Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P = 0.25f + 0.5f * Re, RP = Re / P, TP = Tr / (1.0f - P);
         return e + f * (n > 2 ? (math::pseudorand() < P ?
-                    pathtrace(r_reflected, n + 1) * RP : pathtrace(Ray(P_vector, tdir), n + 1) * TP):
-                    pathtrace(r_reflected, n + 1) * Re + pathtrace(Ray(P_vector, tdir), n + 1) * Tr);
+                                 pathtrace(r_reflected, n + 1) * RP : pathtrace(Ray(P_vector, tdir), n + 1) * TP):
+                        pathtrace(r_reflected, n + 1) * Re + pathtrace(Ray(P_vector, tdir), n + 1) * Tr);
     }
 
     return e + f;

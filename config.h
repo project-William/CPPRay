@@ -6,7 +6,7 @@
 #define SCALE 2
 #define THREADS -1
 #define GAMMA 2.2f
-#define RECURSION_MAX 2
+#define RECURSION_MAX 1
 #define KDTREE_MIN_TRIS 3
 #define MAXDISTANCE 128
 #define SUPERSAMPLINGLEVEL 0

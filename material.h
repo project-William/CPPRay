@@ -7,8 +7,14 @@ using namespace math;
 
 enum Refl_t
 {
-    DIFF, SPEC, REFR, GLOS
+    DIFF = 0x01, SPEC = 0x02, REFR = 0x04, GLOS = 0x08
 };
+
+/*
+inline Refl_t operator|(Refl_t left, Refl_t right)
+{
+    return static_cast<Refl_t>(static_cast<int>(left) | static_cast<int>(right));
+}*/
 
 /*  Material
     refl_t = Surface type

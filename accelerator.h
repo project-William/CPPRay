@@ -12,12 +12,6 @@
 #include "plane.h"
 #include "triangle.h"
 
-/*
-    THIS WAS JUST A TEST
-    HAS TO BE REWRITTEN COMPLETELY FROM SCRATCH
-    I'LL DO IT SOME BORING DAY
-*/
-
 namespace accelerator
 {
 
@@ -27,7 +21,7 @@ struct sort_by_x
 {
     inline bool operator() (Triangle &t1, Triangle &t2)
     {
-        return (t1.getCentroid().x < t2.getCentroid().x);
+        return (t1.getMinimum().x < t2.getMinimum().x);
     }
 };
 
@@ -35,7 +29,7 @@ struct sort_by_y
 {
     inline bool operator() (Triangle &t1, Triangle &t2)
     {
-        return (t1.getCentroid().y < t2.getCentroid().y);
+        return (t1.getMinimum().y < t2.getMinimum().y);
     }
 };
 
@@ -43,7 +37,7 @@ struct sort_by_z
 {
     inline bool operator() (Triangle &t1, Triangle &t2)
     {
-        return (t1.getCentroid().z < t2.getCentroid().z);
+        return (t1.getMinimum().z < t2.getMinimum().z);
     }
 };
 
@@ -51,72 +45,45 @@ struct KDBox
 {
     KDBox(vec3 minv = vec3(), vec3 maxv = vec3())
     {
-        bounds[0] = minv;
-        bounds[1] = maxv;
+        lb = minv;
+        rt = maxv;
     }
 
-    bool intersect(const Ray &ray, float tmin, float tmax) const
+    bool intersect(const Ray &ray, float t) const
     {
-        float tymin, tymax, tzmin, tzmax;
+        float tmin, tmax;
         vec3 ro = ray.getOrigin();
         vec3 rd = ray.getDirection();
         vec3 rd_inv = ray.getDirectionInv();
 
-        tmin = (bounds[ray.sign[0]].x - ro.x) * rd_inv.x;
-        tmax = (bounds[1 - ray.sign[0]].x - ro.x) * rd_inv.x;
+        float t1 = (lb.x - ro.x) * rd_inv.x;
+        float t2 = (rt.x - ro.x) * rd_inv.x;
+        float t3 = (lb.y - ro.y) * rd_inv.y;
+        float t4 = (rt.y - ro.y) * rd_inv.y;
+        float t5 = (lb.z - ro.z) * rd_inv.z;
+        float t6 = (rt.z - ro.z) * rd_inv.z;
 
-        tymin = (bounds[ray.sign[1]].y - ro.y) * rd_inv.y;
-        tymax = (bounds[1 - ray.sign[1]].y - ro.y) * rd_inv.y;
+        tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+        tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 
-        if ((tmin > tymax) || (tymin > tmax))
+        if (tmax < 0.0f)
+        {
+            t = tmax;
             return false;
-        if (tymin > tmin)
-            tmin = tymin;
-        if (tymax < tmax)
-            tmax = tymax;
+        }
 
-        tzmin = (bounds[ray.sign[2]].z - ro.z) * rd_inv.z;
-        tzmax = (bounds[1 - ray.sign[2]].z - ro.z) * rd_inv.z;
-
-        if ((tmin > tzmax) || (tzmin > tmax))
+        if (tmin > tmax)
+        {
+            t = tmax;
             return false;
-        if (tzmin > tmin)
-            tmin = tzmin;
-        if (tzmax < tmax)
-            tmax = tzmax;
+        }
 
+        t = tmin;
         return true;
     }
 
-    vec3 bounds[2];
+    vec3 lb, rt;
     float volume;
-};
-
-struct KDPlane
-{
-    KDPlane(vec3 position, vec3 normal) : m_position(position), m_normal(normal) { }
-
-    bool intersect(const Ray &r, float &t, float tmin, float tmax) const
-    {
-        vec3 P;
-        float d;
-
-        P = m_position - r.getOrigin();
-        d = vec3::dot(m_normal, r.getDirection());
-
-        if (d < -EPSILON || d > EPSILON)
-            return false;
-
-        t = vec3::dot(P, m_normal) / d;
-
-        if (t < EPSILON)
-            return false;
-
-        return true;
-    }
-
-    vec3 m_position;
-    vec3 m_normal;
 };
 
 struct KDNode
@@ -162,27 +129,14 @@ public:
         m_initialized = true;
 
         std::cout << "KDTree: Build finished! Time taken: " << duration << "s." << std::endl;
-        std::cout << "KDTree: Root min: " << m_root.box.bounds[0].toString() << " Root max: " << m_root.box.bounds[1].toString() << std::endl;
+        std::cout << "KDTree: Root min: " << m_root.box.lb.toString() << " Root max: " << m_root.box.rt.toString() << std::endl;
     }
 
     void intersect(const Ray &ray, Intersection &xFinal)
     {
         vec3 ro = ray.getOrigin();
         vec3 rd = ray.getDirection();
-
-        float t1, t2;
-
-        KDPlane plane1(m_root.box.bounds[0] - ro, rd);
-        KDPlane plane2(m_root.box.bounds[1] - ro, rd);
-        plane1.intersect(ray, t1, 0.0f, 1028.0f);
-        plane2.intersect(ray, t2, 0.0f, 1028.0f);
-
-        float tmin = (t1 < t2) ? t1 : t2;
-        float tmax = (t1 < t2) ? t2 : t1;
-
-        //std::cout << tmin << "    " << tmax << std::endl;
-
-        traverse(&m_root, ray, xFinal, tmin, tmax);
+        traverse(&m_root, ray, xFinal, MAXDISTANCE);
     }
 
     bool isInitialized()
@@ -202,16 +156,16 @@ private:
         std::copy(triangles.begin(), triangles.end(), minmaxlist.begin());
 
         std::sort(minmaxlist.begin(), minmaxlist.end(), sort_by_x());
-        float minx = minmaxlist.front().getCentroid().x;
-        float maxx = minmaxlist.back().getCentroid().x;
+        float minx = minmaxlist.front().getMinimum().x;
+        float maxx = minmaxlist.back().getMaximum().x;
 
         std::sort(minmaxlist.begin(), minmaxlist.end(), sort_by_y());
-        float miny = minmaxlist.front().getCentroid().y;
-        float maxy = minmaxlist.back().getCentroid().y;
+        float miny = minmaxlist.front().getMinimum().y;
+        float maxy = minmaxlist.back().getMaximum().y;
 
         std::sort(minmaxlist.begin(), minmaxlist.end(), sort_by_z());
-        float minz = minmaxlist.front().getCentroid().z;
-        float maxz = minmaxlist.back().getCentroid().z;
+        float minz = minmaxlist.front().getMinimum().z;
+        float maxz = minmaxlist.back().getMaximum().z;
 
         vec3 minv = vec3(minx, miny, minz);
         vec3 maxv = vec3(maxx, maxy, maxz);
@@ -219,24 +173,30 @@ private:
         node->box = KDBox(minv, maxv);
         node->box.volume = (maxx - minx) * (maxy - miny) * (maxz - minz);
 
-        std::cout << "KDTree: Node volume: " << node->box.volume << std::endl;
+        //std::cout << "KDTree: Node lb: " << node->box.lb.toString() << " rt: " << node->box.rt.toString() << std::endl;
 
         // Find the median
         if (axis == 0)
+        {
             std::sort(triangles.begin(), triangles.end(), sort_by_x());
+        }
         else if (axis == 1)
+        {
             std::sort(triangles.begin(), triangles.end(), sort_by_y());
+        }
         else
+        {
             std::sort(triangles.begin(), triangles.end(), sort_by_z());
+        }
 
-        node->median = triangles[median].getCentroid();
+        node->median = (maxv + minv) / triangles.size();
+
+        std::cout << "KDTree: Node median: " + node->median.toString() << std::endl;
 
         // Create a leaf
         if (triangles.size() <= KDTREE_MIN_TRIS)
         {
             node->data.insert(node->data.end(), triangles.begin(), triangles.end());
-
-            //std::cout << "KDTree: Created a leaf size of " << triangles.size() << " D: " << node->depth << " A: " << axis << " N: " << node->median.toString() << std::endl;
             return;
         }
 
@@ -249,20 +209,17 @@ private:
         std::copy(triangles.begin(), triangles.begin() + median, leftlist.begin());
         std::copy(triangles.begin() + median, triangles.end(), rightlist.begin());
 
-        //std::cout << "KDTree: Created a branch at " << node->median.toString() << " L: " << leftlist.size() << " R: " << rightlist.size() << " D: " << node->depth << " A: " << axis << std::endl;
-
         build(node->left, leftlist);
         build(node->right, rightlist);
     }
 
-    void traverse(KDNode *node, const Ray &ray, Intersection &xFinal, float tmin, float tmax)
+    void traverse(KDNode *node, const Ray &ray, Intersection &xFinal, float t)
     {
         const unsigned int depth = node->depth;
         const unsigned int axis = depth % m_k;
         const vec3 median = node->median;
         const vec3 ro = ray.getOrigin();
         const vec3 rd = ray.getDirection();
-        const float t = (median - ro).length();
 
         if (node->isLeaf())
         {
@@ -270,19 +227,25 @@ private:
             {
                 auto xInit = triangle.intersect(ray);
 
-                if (xInit != invalidIntersection && xInit.getT() < tmax)
+                if (xInit != invalidIntersection && xInit.getT() < t)
                 {
                     xFinal = xInit;
-                    tmax = xFinal.getT();
+                    t = xFinal.getT();
                     return;
                 }
             }
         }
         else
         {
-            traverse(node->left, ray, xFinal, tmin, tmax);
-            traverse(node->right, ray, xFinal, tmin, tmax);
+            if (node->right->box.intersect(ray, t))
+            {
+                traverse(node->right, ray, xFinal, t);
+            }
 
+            if (node->left->box.intersect(ray, t))
+            {
+                traverse(node->left, ray, xFinal, t);
+            }
         }
     }
 

@@ -196,7 +196,7 @@ struct vec3
         float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
         float r2;
 
-        if (pseudorand() < 0.5f) // Importance sampling, should we bias the distribution or not?
+        if (pseudorand() < 0.33f) // Importance sampling, should we bias the distribution or not?
             r2 = brdf_dis(gen);
         else
             r2 = pseudorand();
@@ -228,7 +228,7 @@ inline vec3 operator*(float f, const vec3 &v)
 
 inline vec3 operator/(float f, const vec3 &v)
 {
-    return v / f;
+    return vec3(f / v.x, f / v.y, f / v.z);
 }
 
 }

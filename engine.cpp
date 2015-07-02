@@ -107,21 +107,10 @@ Intersection Engine::intersect(const Ray &r, float t)
     }
 
     // Find the nearest intersection against a triangle if there's any
-    for (auto &tr : m_scene.getSceneTriangles())
+    if (m_scene.getKDTree().isInitialized())
     {
-        xInit = tr.intersect(r);
-
-        if (xInit != invalidIntersection && xInit.getT() < t)
-        {
-            xFinal = xInit;
-            t = xFinal.getT();
-        }
+        m_scene.getKDTree().intersect(r, xFinal);
     }
-
-    //if (m_scene.getKDTree().isInitialized())
-    //{
-    //m_scene.getKDTree().intersect(r, xFinal);
-    //}
 
     return xFinal;
 }
